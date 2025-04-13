@@ -12,12 +12,12 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return view('categories.index', compact('categories'));
+        return view('admin.category.index', compact('categories'));
     }
 
     public function create()
     {
-        return view('categories.create');
+        return view('admin.category.create');
     }
 
     public function store(Request $request)
@@ -43,7 +43,7 @@ class CategoryController extends Controller
 
             DB::commit();
 
-            return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+            return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Failed to create category: ' . $e->getMessage());
@@ -53,13 +53,13 @@ class CategoryController extends Controller
     public function show($id)
     {
         $category = Category::with('menus')->findOrFail($id);
-        return view('categories.show', compact('category'));
+        return view('admin.category.show', compact('category'));
     }
 
     public function edit($id)
     {
         $category = Category::with('menus')->findOrFail($id);
-        return view('categories.edit', compact('category'));
+        return view('admin.category.edit', compact('category'));
     }
 
     public function update(Request $request, $id)
@@ -86,7 +86,7 @@ class CategoryController extends Controller
 
             DB::commit();
 
-            return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+            return redirect()->route('admin.category.index')->with('success', 'Category updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Failed to update category: ' . $e->getMessage());
@@ -108,10 +108,10 @@ class CategoryController extends Controller
 
             DB::commit();
 
-            return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+            return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('categories.index')->with('error', 'Failed to delete category: ' . $e->getMessage());
+            return redirect()->route('admin.category.index')->with('error', 'Failed to delete category: ' . $e->getMessage());
         }
     }
 }

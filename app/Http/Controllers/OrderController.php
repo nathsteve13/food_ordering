@@ -11,12 +11,12 @@ class OrderController extends Controller
     public function index()
     {
         $transactions = Transaction::with('user')->get();
-        return view('orders.index', compact('transactions'));
+        return view('admin.order.index', compact('transactions'));
     }
 
     public function create()
     {
-        return view('orders.create');
+        return view('admin.order.create');
     }
 
     public function store(Request $request)
@@ -36,23 +36,23 @@ class OrderController extends Controller
             Transaction::create($validated);
             DB::commit();
 
-            return redirect()->route('orders.index')->with('success', 'Transaction created successfully.');
+            return redirect()->route('admin.order.index')->with('success', 'Transaction created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('orders.index')->with('error', 'Failed to create transaction: ' . $e->getMessage());
+            return redirect()->route('admin.order.index')->with('error', 'Failed to create transaction: ' . $e->getMessage());
         }
     }
 
     public function show($invoice_number)
     {
         $order = Transaction::with('user')->findOrFail($invoice_number);
-        return view('orders.show', compact('order'));
+        return view('admin.order.show', compact('order'));
     }
 
     public function edit($invoice_number)
     {
         $order = Transaction::findOrFail($invoice_number);
-        return view('orders.edit', compact('order'));
+        return view('admin.order.edit', compact('order'));
     }
 
     public function update(Request $request, $invoice_number)
@@ -73,10 +73,10 @@ class OrderController extends Controller
             $order->update($validated);
             DB::commit();
 
-            return redirect()->route('orders.index')->with('success', 'Transaction updated successfully.');
+            return redirect()->route('admin.order.index')->with('success', 'Transaction updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('orders.index')->with('error', 'Failed to update transaction: ' . $e->getMessage());
+            return redirect()->route('admin.order.index')->with('error', 'Failed to update transaction: ' . $e->getMessage());
         }
     }
 
@@ -89,10 +89,10 @@ class OrderController extends Controller
             $order->delete();
             DB::commit();
 
-            return redirect()->route('orders.index')->with('success', 'Transaction deleted successfully.');
+            return redirect()->route('admin.order.index')->with('success', 'Transaction deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('orders.index')->with('error', 'Failed to delete transaction: ' . $e->getMessage());
+            return redirect()->route('admin.order.index')->with('error', 'Failed to delete transaction: ' . $e->getMessage());
         }
     }
 }

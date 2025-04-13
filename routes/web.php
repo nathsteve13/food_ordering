@@ -39,24 +39,24 @@ Route::prefix('admin/food')->group(function () {
     Route::delete('/{id}', [FoodController::class, 'destroy'])->name('admin.food.destroy');
 });
 
-Route::prefix('orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/create', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('/', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/{invoice_number}', [OrderController::class, 'show'])->name('orders.show');
-    Route::get('/{invoice_number}/edit', [OrderController::class, 'edit'])->name('orders.edit');
-    Route::put('/{invoice_number}', [OrderController::class, 'update'])->name('orders.update');
-    Route::delete('/{invoice_number}', [OrderController::class, 'destroy'])->name('orders.destroy');
+Route::prefix('admin/order')->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('admin.order.index');
+    Route::get('/create', [OrderController::class, 'create'])->name('admin.order.create');
+    Route::post('/', [OrderController::class, 'store'])->name('admin.orders.store');
+    Route::get('/{invoice_number}', [OrderController::class, 'show'])->name('admin.order.show');
+    Route::get('/{invoice_number}/edit', [OrderController::class, 'edit'])->name('admin.order.edit');
+    Route::put('/{invoice_number}', [OrderController::class, 'update'])->name('admin.order.update');
+    Route::delete('/{invoice_number}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
 });
 
-Route::prefix('categories')->group(function () {
-    Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
-    Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
-    Route::get('/{id}', [CategoryController::class, 'show'])->name('categories.show');
-    Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-    Route::put('/{id}', [CategoryController::class, 'update'])->name('categories.update');
-    Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+Route::prefix('admin/category')->group(function () {
+    Route::get('/', [CategoryController::class, 'index'])->name('admin.category.index');
+    Route::get('/create', [CategoryController::class, 'create'])->name('admin.category.create');
+    Route::post('/', [CategoryController::class, 'store'])->name('admin.category.store');
+    Route::get('/{id}', [CategoryController::class, 'show'])->name('admin.category.show');
+    Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
+    Route::put('/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
 });
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
