@@ -1,9 +1,9 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div class="container mt-4">
     <h2>Daftar Makanan</h2>
-    <a href="{{ route('food.create') }}" class="btn btn-primary mb-3">Tambah Makanan</a>
+    <a href="{{ route('admin.food.create') }}" class="btn btn-primary mb-3">Tambah Makanan</a>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -14,7 +14,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($foods as $food)
+            @foreach($menus as $food)
             <tr>
                 <td>{{ $food->nama }}</td>
                 <td>Rp {{ number_format($food->harga) }}</td>

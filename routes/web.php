@@ -29,14 +29,14 @@ Route::get('/products', function () {
 });
 
 
-Route::prefix('food')->group(function () {
-    Route::get('/', [FoodController::class, 'index'])->name('foods.index');
-    Route::get('/create', [FoodController::class, 'create'])->name('foods.create');
-    Route::post('/', [FoodController::class, 'store'])->name('foods.store');
-    Route::get('/{id}', [FoodController::class, 'show'])->name('foods.show');
-    Route::get('/{id}/edit', [FoodController::class, 'edit'])->name('foods.edit');
-    Route::put('/{id}', [FoodController::class, 'update'])->name('foods.update');
-    Route::delete('/{id}', [FoodController::class, 'destroy'])->name('foods.destroy');
+Route::prefix('admin/food')->group(function () {
+    Route::get('/', [FoodController::class, 'index'])->name('admin.food.index');
+    Route::get('/create', [FoodController::class, 'create'])->name('admin.food.create');
+    Route::post('/', [FoodController::class, 'store'])->name('admin.food.store');
+    Route::get('/{id}', [FoodController::class, 'show'])->name('admin.food.show');
+    Route::get('/{id}/edit', [FoodController::class, 'edit'])->name('admin.food.edit');
+    Route::put('/{id}', [FoodController::class, 'update'])->name('admin.food.update');
+    Route::delete('/{id}', [FoodController::class, 'destroy'])->name('admin.food.destroy');
 });
 
 Route::prefix('orders')->group(function () {

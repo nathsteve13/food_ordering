@@ -6,11 +6,6 @@
 
     @include('layouts.svg-symbols')
 
-    <div class="preloader-wrapper">
-        <div class="preloader">
-        </div>
-    </div>
-
     @include('layouts.offcanvas-cart')
 
     @include('layouts.offcanvas-search')

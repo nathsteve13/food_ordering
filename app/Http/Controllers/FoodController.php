@@ -13,12 +13,12 @@ class FoodController extends Controller
     public function index()
     {
         $menus = Menu::with('images')->get();
-        return view('foods.index', compact('menus'));
+        return view('admin.food.index', compact('menus'));
     }
 
     public function create()
     {
-        return view('foods.create');
+        return view('admin.food.create');
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class FoodController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('foods.index')->with('success', 'Menu created successfully with images.');
+            return redirect()->route('admin.food.index')->with('success', 'Menu created successfully with images.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()
@@ -65,18 +65,18 @@ class FoodController extends Controller
         $food = Menu::with('images')->findOrFail($id);
 
         if (!$food) {
-            return redirect()->route('foods.index')->with('error', 'Menu not found.');
+            return redirect()->route('admin.food.index')->with('error', 'Menu not found.');
         }
-        return view('foods.show', compact('food'));
+        return view('admin.food.show', compact('food'));
     }
 
     public function edit($id)
     {
         $food = Menu::findOrFail($id);
         if (!$food) {
-            return redirect()->route('foods.index')->with('error', 'Menu not found.');
+            return redirect()->route('food.index')->with('error', 'Menu not found.');
         }
-        return view('foods.edit', compact('food'));
+        return view('admin.food.edit', compact('food'));
     }
 
     public function update(Request $request, $id)
@@ -110,7 +110,7 @@ class FoodController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('foods.index')->with('success', 'Menu updated successfully.');
+            return redirect()->route('admin.food.index')->with('success', 'Menu updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()
@@ -128,7 +128,7 @@ class FoodController extends Controller
             $food = Menu::with('images')->findOrFail($id);
 
             if (!$food) {
-                return redirect()->route('foods.index')->with('error', 'Menu not found.');
+                return redirect()->route('admin.food.index')->with('error', 'Menu not found.');
             }
 
             if ($food->images) {
@@ -141,11 +141,11 @@ class FoodController extends Controller
             $food->delete();
 
             DB::commit();
-            return redirect()->route('foods.index')->with('success', 'Menu deleted successfully.');
+            return redirect()->route('admin.food.index')->with('success', 'Menu deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()
-                ->route('foods.index')
+                ->route('admin.food.index')
                 ->with('error', 'Failed to delete menu: ' . $e->getMessage());
         }
     }
