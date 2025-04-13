@@ -18,4 +18,12 @@ class Menu extends Model
     {
         return $this->belongsToMany(Ingredient::class, 'menus_has_ingredients');
     }
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'categories_id');
+    }
+    public function images()
+    {
+        return $this->hasMany(MenuImage::class, 'menus_id');
+    }
 }
