@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,3 +60,19 @@ Route::prefix('categories')->group(function () {
 });
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('registerForm');
+
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
+
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('loginForm');
+
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
