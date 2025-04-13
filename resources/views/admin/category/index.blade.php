@@ -1,9 +1,9 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div class="container mt-4">
     <h2>Daftar Kategori</h2>
-    <a href="{{ route('kategori.create') }}" class="btn btn-primary mb-3">Tambah Kategori</a>
+    <a href="{{ route('admin.category.create') }}" class="btn btn-primary mb-3">Tambah Kategori</a>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($kategories as $kategori)
+            @foreach($categories as $kategori)
             <tr>
                 <td>{{ $kategori->nama }}</td>
                 <td>

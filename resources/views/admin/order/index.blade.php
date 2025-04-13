@@ -1,9 +1,9 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div class="container mt-4">
     <h2>Daftar Pesanan</h2>
-    <a href="{{ route('order.create') }}" class="btn btn-primary mb-3">Tambah Pesanan</a>
+    <a href="{{ route('admin.order.create') }}" class="btn btn-primary mb-3">Tambah Pesanan</a>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($orders as $order)
+            @foreach($transactions as $order)
             <tr>
                 <td>{{ $order->customer->nama }}</td>
                 <td>{{ $order->tanggal }}</td>
