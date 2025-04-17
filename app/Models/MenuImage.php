@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MenuImage extends Model
 {
     use HasFactory;
-    protected $table = 'menus_images';
+    protected $table = 'menu_images';
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';

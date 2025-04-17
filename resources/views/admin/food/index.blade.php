@@ -13,7 +13,7 @@
                     <th>Nutrition Fact</th>
                     <th>Price</th>
                     <th>Stock</th>
-                    <th>Category ID</th>
+                    <th>Category</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -25,7 +25,11 @@
                         <td>{{ $food->nutrition_fact }}</td>
                         <td>{{ $food->description }}</td>
                         <td>{{ $food->price }}</td>
-                        <td>{{ $food->category_id }}</td>
+                        <td>{{ $food->stock }}</td>
+                        <td>{{ $food->category->name }}</td>
+                        <td>
+                            <a href="{{ route('admin.food.edit', $food->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

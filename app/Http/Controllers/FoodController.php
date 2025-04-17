@@ -16,7 +16,7 @@ class FoodController extends Controller
 {
     public function index()
     {
-        $menus = Menu::with('images')->get();
+        $menus = Menu::with('images','category')->get();
         return view('admin.food.index', compact('menus'));
     }
 
