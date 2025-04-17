@@ -31,6 +31,10 @@ Route::get('/products', function () {
 Route::get('/products/{id}', [FoodController::class, 'show'])->name('products.show');
 
 
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+})->middleware(['auth'])->name('admin.dashboard');
+
 Route::prefix('admin/food')->group(function () {
     Route::get('/', [FoodController::class, 'index'])->name('admin.food.index');
     Route::get('/create', [FoodController::class, 'create'])->name('admin.food.create');
