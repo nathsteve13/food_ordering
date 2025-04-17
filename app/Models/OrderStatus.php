@@ -12,6 +12,6 @@ class OrderStatus extends Model
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class, 'transactions_invoice_number');
+        return $this->belongsTo(Transaction::class, 'transactions_invoice_number', 'invoice_number');
     }
 }

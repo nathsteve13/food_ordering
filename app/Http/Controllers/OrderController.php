@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with('user')->get();
+        $transactions = Transaction::with(['status', 'user'])->get();
         return view('admin.order.index', compact('transactions'));
     }
 

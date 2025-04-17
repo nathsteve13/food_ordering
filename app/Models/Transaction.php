@@ -26,6 +26,6 @@ class Transaction extends Model
 
     public function orderStatus()
     {
-        return $this->hasOne(OrderStatus::class, 'transactions_invoice_number');
+        return $this->hasOne(OrderStatus::class, 'transactions_invoice_number', 'invoice_number');
     }
 }
