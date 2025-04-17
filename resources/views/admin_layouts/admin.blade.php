@@ -29,7 +29,7 @@
             @include('admin_layouts.sidebar')
         </aside>
 
-        <main class="app-main mt-2">
+        <main class="app-main mt-2 p-4">
             @yield('content')
         </main>
     </div>
