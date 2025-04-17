@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Auth\RegisterController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,6 +28,7 @@ Route::get('/', function () {
 Route::get('/products', function () {
     return view('products.index');
 });
+Route::get('/products/{id}', [FoodController::class, 'show'])->name('products.show');
 
 
 Route::get('/admin/dashboard', function () {
