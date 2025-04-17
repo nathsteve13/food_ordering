@@ -1,5 +1,6 @@
 <div class="col">
     <div class="product-item">
+        <a href="{{ route('products.show', ['id' => $i]) }}" title="Product Title">
         <span class="badge bg-success position-absolute m-3">-30%</span>
         <a href="#" class="btn-wishlist"><svg width="24" height="24">
                 <use xlink:href="#heart"></use>
