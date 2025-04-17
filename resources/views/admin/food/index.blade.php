@@ -3,6 +3,7 @@
 @section('content')
     <div class="container">
         <h1>Food List</h1>
+        <a href="{{ route('admin.food.create') }}" class="btn btn-primary mb-3">Add New Food</a>
         <table class="table table-bordered">
             <thead>
                 <tr>

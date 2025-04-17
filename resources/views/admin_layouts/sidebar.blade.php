@@ -10,7 +10,7 @@
             <ul class="nav sidebar-menu flex-column">
                 <!-- Define sidebar items here -->
                 <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
+                    <a href="{{route('admin.dashboard')}}" class="nav-link active">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>Dashboard</p>
                     </a>
