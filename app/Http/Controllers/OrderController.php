@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\OrderStatus;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -51,32 +53,40 @@ class OrderController extends Controller
 
     public function edit($invoice_number)
     {
-        $order = Transaction::findOrFail($invoice_number);
-        return view('admin.order.edit', compact('order'));
+        $order = Transaction::with('orderStatus')->findOrFail($invoice_number);
+        $statuses = OrderStatus::select('status_type')->distinct()->get();
+        $customers = User::all();
+        return view('admin.order.edit', compact('order', 'statuses', 'customers'));
     }
 
     public function update(Request $request, $invoice_number)
     {
         $validated = $request->validate([
-            'subtotal' => 'required|numeric',
-            'discount' => 'required|numeric',
-            'total' => 'required|numeric',
-            'order_type' => 'required|in:dinein,takeaway',
-            'payment_type' => 'required|in:qris,credit,debit,e-wallet',
-            'users_id' => 'required|exists:users,id',
+            'status_type' => 'required|string|exists:statuses,status_type',
         ]);
-
-        $order = Transaction::findOrFail($invoice_number);
-
+    
+        $order = Transaction::with('orderStatus')->findOrFail($invoice_number);
+    
         DB::beginTransaction();
         try {
-            $order->update($validated);
+            // Jika sudah ada status, update
+            if ($order->orderStatus) {
+                $order->orderStatus->update([
+                    'status_type' => $validated['status_type'],
+                ]);
+            } else {
+                // Jika belum ada status, buat baru
+                $order->orderStatus()->create([
+                    'transactions_invoice_number' => $invoice_number,
+                    'status_type' => $validated['status_type'],
+                ]);
+            }
+    
             DB::commit();
-
-            return redirect()->route('admin.order.index')->with('success', 'Transaction updated successfully.');
+            return redirect()->route('admin.order.index')->with('success', 'Update Status Successfull.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('admin.order.index')->with('error', 'Failed to update transaction: ' . $e->getMessage());
+            return redirect()->route('admin.order.index')->with('error', 'Failed to Update Status: ' . $e->getMessage());
         }
     }
 
