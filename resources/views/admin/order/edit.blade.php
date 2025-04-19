@@ -17,7 +17,7 @@
                 <select name="customer_id" class="form-control" disabled>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}" {{ $order->customer_id == $customer->id ? 'selected' : '' }}>
-                            {{ $customer->nama }}
+                            {{ $customer->name }}
                         </option>
                     @endforeach
                 </select>
@@ -25,7 +25,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Tanggal</label>
-                <input type="date" name="tanggal" class="form-control" value="{{ $order->tanggal }}" disabled>
+                <input type="date" name="tanggal" class="form-control" value="{{ $order->created_at ? $order->created_at->format('Y-m-d') : '' }}" disabled>
             </div>
 
             <div class="mb-3">
@@ -35,10 +35,10 @@
 
             <div class="mb-3">
                 <label class="form-label">Status Pemesanan</label>
-                <select name="status_type" class="form-control" required>
-                    @foreach($statuses as $status)
-                        <option value="{{ $status->status_type }}" {{ $order->orderStatus && $order->orderStatus->status_type === $status->status_type ? 'selected' : '' }}>
-                            {{ ucfirst($status->status_type) }}
+                <select name="status_type" class="form-control">
+                    @foreach ($statuses as $status)
+                        <option value="{{ $status }}" {{ $order->orderStatus && $order->orderStatus->status_type == $status ? 'selected' : '' }}>
+                            {{ ucfirst($status) }}
                         </option>
                     @endforeach
                 </select>

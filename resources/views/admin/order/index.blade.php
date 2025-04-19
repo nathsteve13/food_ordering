@@ -27,7 +27,7 @@
                         <td>Rp {{ number_format($order->total) }}</td>
                         <td>{{ ucfirst($order->order_type) }}</td>
                         <td>{{ ucfirst($order->payment_type) }}</td>
-                        <td>{{ $order->user->nama ?? '-' }}</td>
+                        <td>{{ $order->user->name ?? '-' }}</td>
                         <td>{{ $order->created_at->format('d M Y H:i') }}</td>
                         <td>{{ ucfirst($order->orderStatus->status_type ?? '-') }}</td>
                         <td>

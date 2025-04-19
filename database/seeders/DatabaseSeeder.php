@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             menu::class,
             ingredients::class,
             menus_has_ingredients::class,
+            order::class,
         ]);
     }
 }

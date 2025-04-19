@@ -12,7 +12,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['status', 'user'])->get();
+        $transactions = Transaction::with(['orderStatus', 'user'])->get();
         return view('admin.order.index', compact('transactions'));
     }
 
@@ -54,7 +54,7 @@ class OrderController extends Controller
     public function edit($invoice_number)
     {
         $order = Transaction::with('orderStatus')->findOrFail($invoice_number);
-        $statuses = OrderStatus::select('status_type')->distinct()->get();
+        $statuses = ['pending', 'proccessed', 'ready'];
         $customers = User::all();
         return view('admin.order.edit', compact('order', 'statuses', 'customers'));
     }
@@ -62,7 +62,7 @@ class OrderController extends Controller
     public function update(Request $request, $invoice_number)
     {
         $validated = $request->validate([
-            'status_type' => 'required|string|exists:statuses,status_type',
+            'status_type' => 'required|in:pending,proccessed,ready',
         ]);
     
         $order = Transaction::with('orderStatus')->findOrFail($invoice_number);
