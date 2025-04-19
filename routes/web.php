@@ -7,8 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Auth\RegisterController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -35,11 +35,20 @@ Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->middleware(['auth'])->name('admin.dashboard');
 
+// Tampilkan form konfirmasi pembayaran
+Route::get('/transactions/confirm', [OrderController::class, 'show'])->name('transactions.confirm.form');
+
+// Terima data form transaksi
+Route::post('/transactions/confirm', [OrderController::class, 'store'])->name('transactions.confirm');
+
 Route::prefix('admin/food')->group(function () {
     Route::get('/', [FoodController::class, 'index'])->name('admin.food.index');
     Route::get('/create', [FoodController::class, 'create'])->name('admin.food.create');
     Route::post('/', [FoodController::class, 'store'])->name('admin.food.store');
+    
+    // Routing untuk halaman detail produk
     Route::get('/{id}', [FoodController::class, 'show'])->name('admin.food.show');
+
     Route::get('/{id}/edit', [FoodController::class, 'edit'])->name('admin.food.edit');
     Route::put('/{id}', [FoodController::class, 'update'])->name('admin.food.update');
     Route::delete('/{id}', [FoodController::class, 'destroy'])->name('admin.food.destroy');
@@ -82,3 +91,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+//Menampilkan data report
+Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');

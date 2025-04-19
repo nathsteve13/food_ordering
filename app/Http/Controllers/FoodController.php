@@ -95,6 +95,7 @@ class FoodController extends Controller
         }
     }
 
+    //Method untuk menampilkan product detail
     public function show($id)
     {
         $food = Menu::with('images')->findOrFail($id);
