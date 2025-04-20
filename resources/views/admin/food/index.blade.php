@@ -33,8 +33,7 @@
                                 onsubmit="return confirm('Are you sure you want to delete this menu?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-link text-danger p-0 m-0 align-baseline"
-                                    style="text-decoration: underline;">Delete</button>
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>
                         </td>
                     </tr>
