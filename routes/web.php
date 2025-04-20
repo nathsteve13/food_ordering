@@ -47,7 +47,6 @@ Route::prefix('admin/food')->group(function () {
     Route::post('/', [FoodController::class, 'store'])->name('admin.food.store');
     
     // Routing untuk halaman detail produk
-    Route::get('/{id}', [FoodController::class, 'show'])->name('admin.food.show');
 
     Route::get('/{id}/edit', [FoodController::class, 'edit'])->name('admin.food.edit');
     Route::put('/{id}', [FoodController::class, 'update'])->name('admin.food.update');
@@ -57,6 +56,10 @@ Route::prefix('admin/food')->group(function () {
 Route::prefix('admin/order')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('admin.order.index');
     Route::get('/create', [OrderController::class, 'create'])->name('admin.order.create');
+
+    Route::get('/detail/{invoice_number}', [OrderController::class, 'detail']);
+
+
     Route::post('/', [OrderController::class, 'store'])->name('admin.orders.store');
     Route::get('/{invoice_number}', [OrderController::class, 'show'])->name('admin.order.show');
     Route::get('/{invoice_number}/edit', [OrderController::class, 'edit'])->name('admin.order.edit');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailTransaction;
 use App\Models\Transaction;
 use App\Models\OrderStatus;
 use App\Models\User;
@@ -15,6 +16,13 @@ class OrderController extends Controller
         $transactions = Transaction::with(['orderStatus', 'user'])->get();
         return view('admin.order.index', compact('transactions'));
     }
+
+
+    public function detail($invoice_number) {
+        $details = DetailTransaction::with(['transaction', 'menu'])->where('transactions_invoice_number', $invoice_number)->get();
+        return response()->json($details);
+    }
+
 
     public function create()
     {

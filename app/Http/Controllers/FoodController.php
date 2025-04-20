@@ -112,7 +112,8 @@ class FoodController extends Controller
         if (!$food) {
             return redirect()->route('food.index')->with('error', 'Menu not found.');
         }
-        return view('admin.food.edit', compact('food'));
+        $kategories = Category::all();
+        return view('admin.food.edit', compact('food', 'kategories'));
     }
 
     public function update(Request $request, $id)
