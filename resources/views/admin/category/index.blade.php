@@ -18,7 +18,7 @@
             @foreach ($categories as $kategori)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $kategori->nama }}</td>
+                        <td>{{ $kategori->name }}</td>
                         <td>
                             <a href="{{ route('admin.category.edit', $kategori->id) }}" class="btn btn-warning btn-sm">Edit</a>
 

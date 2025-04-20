@@ -15,9 +15,10 @@
                     <div class="col-md-4 d-none d-md-block">
                         <select class="form-select border-0 bg-transparent">
                             <option>All Categories</option>
-                            <option>Groceries</option>
-                            <option>Drinks</option>
-                            <option>Chocolates</option>
+                            <option>Makanan Berat</option>
+                            <option>Makanan Penutup</option>
+                            <option>Cemilan</option>
+                            <option>Minuman</option>
                         </select>
                     </div>
                     <div class="col-11 col-md-7">
