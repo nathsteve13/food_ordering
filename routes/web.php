@@ -78,12 +78,12 @@ Route::prefix('admin/category')->group(function () {
 });
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 Route::get('/register', function () {
     return view('auth.register');
 })->name('registerForm');
 
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 Route::get('/login', function () {
     return view('auth.login');

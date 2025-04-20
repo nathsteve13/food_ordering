@@ -1,73 +1,130 @@
-@extends('layouts.app')
+<style>
+    .container-login {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+    .card-login {
+        display: flex;
+        width: 800px;
+        height: 500px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 15px;
+        overflow: hidden;
+    }
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+    .left-side {
+        background: #fff;
+        padding: 50px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 
-                        <div class="row mb-3">
-                            <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('Username') }}</label>
+    .right-side {
+        background: linear-gradient(to right, #00c853, #00e676);
+        color: white;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 30px;
+    }
 
-                            <div class="col-md-6">
-                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+    .social-icons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
 
-                                @error('username')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    .social-icons a {
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        padding: 10px;
+        margin: 0 5px;
+        text-decoration: none;
+        color: #000;
+    }
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
+    .form-control {
+        margin-bottom: 15px;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        background-color: #eee;
+    }
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+    .sign-in-btn {
+        background-color: #00c853;
+        color: white;
+        border: none;
+        padding: 10px;
+        width: 100%;
+        border-radius: 30px;
+        font-weight: bold;
+    }
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    .sign-up-btn {
+        background-color: transparent;
+        border: 2px solid white;
+        padding: 10px 25px;
+        border-radius: 30px;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-top: 20px;
+        text-decoration: none;
+    }
+</style>
+@if(session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
 
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul style="margin: 0; padding-left: 20px;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
+<div class="container-login">
+    <div class="card-login">
+        <!-- Left: Sign In -->
+        <div class="left-side">
+            <h2>Sign in</h2>
 
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <input type="text" name="username" placeholder="Email or Username" class="form-control" required autofocus>
+                <input type="password" name="password" placeholder="Password" class="form-control" required>
+
+                <button type="submit" class="sign-in-btn">SIGN IN</button>
+            </form>
+        </div>
+
+        <!-- Right: Sign Up -->
+        <div class="right-side">
+            <h2>Halo, Teman!</h2>
+            <p>Daftarkan diri anda dan mulai gunakan layanan kami segera</p>
+            <a href="{{ route('register') }}" class="sign-up-btn">SIGN UP</a>
         </div>
     </div>
 </div>
-@endsection
