@@ -18,7 +18,8 @@ class OrderController extends Controller
     }
 
 
-    public function detail($invoice_number) {
+    public function detail($invoice_number)
+    {
         $details = DetailTransaction::with(['transaction', 'menu'])->where('transactions_invoice_number', $invoice_number)->get();
         return response()->json($details);
     }
@@ -72,9 +73,9 @@ class OrderController extends Controller
         $validated = $request->validate([
             'status_type' => 'required|in:pending,proccessed,ready',
         ]);
-    
+
         $order = Transaction::with('orderStatus')->findOrFail($invoice_number);
-    
+
         DB::beginTransaction();
         try {
             // Jika sudah ada status, update
@@ -89,7 +90,7 @@ class OrderController extends Controller
                     'status_type' => $validated['status_type'],
                 ]);
             }
-    
+
             DB::commit();
             return redirect()->route('admin.order.index')->with('success', 'Update Status Successfull.');
         } catch (\Exception $e) {
@@ -111,6 +112,35 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('admin.order.index')->with('error', 'Failed to delete transaction: ' . $e->getMessage());
+        }
+    }
+
+    public function updateStatus(Request $request, $invoice_number)
+    {
+        $validated = $request->validate([
+            'status_type' => 'required|in:pending,proccessed,ready',
+        ]);
+
+        $order = Transaction::with('orderStatus')->findOrFail($invoice_number);
+
+        DB::beginTransaction();
+        try {
+            if ($order->orderStatus) {
+                $order->orderStatus->update([
+                    'status_type' => $validated['status_type'],
+                ]);
+            } else {
+                $order->orderStatus()->create([
+                    'transactions_invoice_number' => $invoice_number,
+                    'status_type' => $validated['status_type'],
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Status updated successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to update status: ' . $e->getMessage()], 500);
         }
     }
 }
