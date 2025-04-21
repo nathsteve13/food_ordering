@@ -39,7 +39,50 @@ class ReportController extends Controller
             ->orderByDesc('total_quantity')
             ->first();
 
-        return view('admin.dashboard', compact('activeMembers', 'topMember', 'topMenu'));
+
+        // 4. Total Pendapatan (Grouped by Month)
+        $monthlyIncome = DB::table('transactions')
+            ->select(
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(total) as total_income')
+            )
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        // 5. Top Selling Menu (Grouped by Month)
+        $monthlyTopMenu = DB::table('detail_transactions')
+            ->join('menus', 'detail_transactions.menus_id', '=', 'menus.id')
+            ->select(
+                DB::raw('YEAR(detail_transactions.created_at) as year'),
+                DB::raw('MONTH(detail_transactions.created_at) as month'),
+                'menus.name',
+                DB::raw('SUM(detail_transactions.quantity) as total_quantity')
+            )
+            ->groupBy('year', 'month', 'menus.name')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->orderByDesc('total_quantity')
+            ->get();
+
+        // 6. Bottom Selling Menu (Grouped by Month)
+        $monthlyBottomMenu = DB::table('detail_transactions')
+            ->join('menus', 'detail_transactions.menus_id', '=', 'menus.id')
+            ->select(
+                DB::raw('YEAR(detail_transactions.created_at) as year'),
+                DB::raw('MONTH(detail_transactions.created_at) as month'),
+                'menus.name',
+                DB::raw('SUM(detail_transactions.quantity) as total_quantity')
+            )
+            ->groupBy('year', 'month', 'menus.name')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->orderBy('total_quantity')
+            ->get();
+
+        return view('admin.dashboard', compact('activeMembers', 'topMember', 'topMenu', 'monthlyIncome', 'monthlyTopMenu', 'monthlyBottomMenu'));
     }
 
     /**
