@@ -58,12 +58,13 @@ Route::prefix('admin/order')->group(function () {
 
     Route::get('/detail/{invoice_number}', [OrderController::class, 'detail']);
 
-
     Route::post('/', [OrderController::class, 'store'])->name('admin.orders.store');
     Route::get('/{invoice_number}', [OrderController::class, 'show'])->name('admin.order.show');
     Route::get('/{invoice_number}/edit', [OrderController::class, 'edit'])->name('admin.order.edit');
     Route::put('/{invoice_number}', [OrderController::class, 'update'])->name('admin.order.update');
     Route::delete('/{invoice_number}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
+
+    Route::patch('/status/update/{invoice_number}', [OrderController::class, 'updateStatus'])->name('admin.order.updateStatus');
 });
 
 Route::prefix('admin/category')->group(function () {

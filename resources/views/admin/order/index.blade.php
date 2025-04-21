@@ -29,15 +29,23 @@
                         <td>{{ ucfirst($order->payment_type) }}</td>
                         <td>{{ $order->user->name ?? '-' }}</td>
                         <td>{{ $order->created_at->format('d M Y H:i') }}</td>
-                        <td>{{ ucfirst($order->orderStatus->status_type ?? '-') }}</td>
                         <td>
-                            <a href="{{ route('admin.order.edit', $order->invoice_number) }}"
-                                class="btn btn-warning btn-sm">Edit</a>
-                            <button class="btn btn-info btn-sm"
-                                onclick="showDetailModal('{{ $order->invoice_number }}')">
+                            <select class="form-select form-select-sm d-inline-block w-auto me-1 status-dropdown"
+                                data-invoice="{{ $order->invoice_number }}">
+                                <option selected disabled>Pilih status</option>
+                                @foreach(['pending', 'proccessed', 'ready'] as $status)
+                                    <option value="{{ $status }}" {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
+                                        {{ ucfirst($status) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-success update-status-btn"
+                                data-invoice="{{ $order->invoice_number }}">Update</button>
+                            <button class="btn btn-info btn-sm" onclick="showDetailModal('{{ $order->invoice_number }}')">
                                 Detail
                             </button>
-
                         </td>
                     </tr>
                 @endforeach
@@ -68,24 +76,24 @@
                 .then(response => response.json())
                 .then(data => {
                     let html = `<table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Menu</th>
-                                        <th>Portion</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Menu</th>
+                                                                    <th>Portion</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total</th>
+                                                                    <th>Notes</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>`;
                     data.forEach(item => {
                         html += `<tr>
-                                <td>${item.menu.name}</td>
-                                <td>${item.portion}</td>
-                                <td>${item.qty}</td>
-                                <td>Rp ${item.total}</td>
-                                <td>${item.notes ?? '-'}</td>
-                            </tr>`;
+                                                            <td>${item.menu.name}</td>
+                                                            <td>${item.portion}</td>
+                                                            <td>${item.qty}</td>
+                                                            <td>Rp ${item.total}</td>
+                                                            <td>${item.notes ?? '-'}</td>
+                                                        </tr>`;
                     });
                     html += `</tbody></table>`;
 
@@ -98,5 +106,34 @@
                     new bootstrap.Modal(document.getElementById('detailModal')).show();
                 });
         }
+    </script>
+
+    <script>
+        document.querySelectorAll('.update-status-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const invoiceNumber = this.dataset.invoice;
+                const select = document.querySelector(`.status-dropdown[data-invoice="${invoiceNumber}"]`);
+                const selectedStatus = select.value;
+
+                fetch(`/admin/order/status/update/${invoiceNumber}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        status_type: selectedStatus
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error updating status:', error);
+                        alert('Gagal memperbarui status.');
+                    });
+            });
+        });
     </script>
 @endpush
