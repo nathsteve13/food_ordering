@@ -34,12 +34,6 @@
                         <p>Order</p>
                     </a>
                 </li>
-                <li class="nav-item menu-open">
-                    <a href="{{ route('admin.reports.index')}}" class="nav-link active">
-                        <i class="nav-icon bi bi-book"></i>
-                        <p>Data Report</p>
-                    </a>
-                </li>
             </ul>
         </nav>
     </div>

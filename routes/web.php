@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\ReportController;
+
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 /*
@@ -31,9 +32,7 @@ Route::get('/products', function () {
 Route::get('/products/{id}', [FoodController::class, 'show'])->name('products.show');
 
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth'])->name('admin.dashboard');
+Route::get('/admin/dashboard', [ReportController::class, 'index'])->middleware(['auth'])->name('admin.dashboard');
 
 // Tampilkan form konfirmasi pembayaran
 Route::get('/transactions/confirm', [OrderController::class, 'show'])->name('transactions.confirm.form');

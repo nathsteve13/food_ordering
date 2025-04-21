@@ -39,7 +39,7 @@ class ReportController extends Controller
             ->orderByDesc('total_quantity')
             ->first();
 
-        return view('reports.index', compact('activeMembers', 'topMember', 'topMenu'));
+        return view('admin.dashboard', compact('activeMembers', 'topMember', 'topMenu'));
     }
 
     /**
