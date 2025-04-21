@@ -76,25 +76,49 @@
                 .then(response => response.json())
                 .then(data => {
                     let html = `<table class="table table-bordered">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Menu</th>
-                                                                    <th>Portion</th>
-                                                                    <th>Quantity</th>
-                                                                    <th>Total</th>
-                                                                    <th>Notes</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>`;
-                    data.forEach(item => {
+                                    <thead>
+                                        <tr>
+                                            <th>Menu</th>
+                                            <th>Portion</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                    data.details.forEach(item => {
                         html += `<tr>
-                                                            <td>${item.menu.name}</td>
-                                                            <td>${item.portion}</td>
-                                                            <td>${item.qty}</td>
-                                                            <td>Rp ${item.total}</td>
-                                                            <td>${item.notes ?? '-'}</td>
-                                                        </tr>`;
+                                    <td>${item.menu.name}</td>
+                                    <td>${item.portion}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>Rp ${item.total}</td>
+                                    <td>${item.notes ?? '-'}</td>
+                                </tr>`;
                     });
+                    html += `</tbody></table>`;
+
+                    html += `<h5>Order Status History</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Updated At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+                                    console.log('Order Status History:', data.transactions.order_status);
+                    if (data.transactions.order_status) {
+                        data.transactions.order_status.forEach(status => {
+                            html += `<tr>
+                                        <td>${status.status_type}</td>
+                                        <td>${status.created_at}</td>
+                                    </tr>`;
+                        });
+                    } else {
+                        html += `<tr>
+                                    <td colspan="2">No status history available</td>
+                                </tr>`;
+                    }
                     html += `</tbody></table>`;
 
                     document.getElementById('detailModalBody').innerHTML = html;
@@ -102,7 +126,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching detail:', error);
-                    document.getElementById('detailModalBody').innerHTML = '<p>Gagal memuat data.</p>';
+                    document.getElementById('detailModalBody').innerHTML = '<p>Failed to load data.</p>';
                     new bootstrap.Modal(document.getElementById('detailModal')).show();
                 });
         }

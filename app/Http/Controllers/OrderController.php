@@ -21,7 +21,11 @@ class OrderController extends Controller
     public function detail($invoice_number)
     {
         $details = DetailTransaction::with(['transaction', 'menu'])->where('transactions_invoice_number', $invoice_number)->get();
-        return response()->json($details);
+        $transactions = Transaction::with(['orderStatus', 'user'])->where('invoice_number', $invoice_number)->first();
+        return response()->json([
+            'details' => $details,
+            'transactions' => $transactions,
+        ]);
     }
 
 
