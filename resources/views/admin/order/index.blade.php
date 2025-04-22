@@ -33,8 +33,9 @@
                             <select class="form-select form-select-sm d-inline-block w-auto me-1 status-dropdown"
                                 data-invoice="{{ $order->invoice_number }}">
                                 <option selected disabled>Pilih status</option>
-                                @foreach(['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}" {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
+                                @foreach (['pending', 'proccessed', 'ready'] as $status)
+                                    <option value="{{ $status }}"
+                                        {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
@@ -106,14 +107,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>`;
-                                    console.log('Order Status History:', data.transactions.order_status);
-                    if (data.transactions.order_status) {
-                        data.transactions.order_status.forEach(status => {
-                            html += `<tr>
-                                        <td>${status.status_type}</td>
-                                        <td>${status.created_at}</td>
-                                    </tr>`;
-                        });
+                    console.log('Order Status History:', data.transactions);
+                    if (data.transactions.status_type) {
+                        html += `<tr>
+                                    <td>${data.transactions.status_type}</td>
+                                    <td>${new Date(data.transactions.updated_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                                </tr>`;
                     } else {
                         html += `<tr>
                                     <td colspan="2">No status history available</td>
@@ -134,21 +133,21 @@
 
     <script>
         document.querySelectorAll('.update-status-btn').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const invoiceNumber = this.dataset.invoice;
                 const select = document.querySelector(`.status-dropdown[data-invoice="${invoiceNumber}"]`);
                 const selectedStatus = select.value;
 
                 fetch(`/admin/order/status/update/${invoiceNumber}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        status_type: selectedStatus
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            status_type: selectedStatus
+                        })
                     })
-                })
                     .then(response => response.json())
                     .then(data => {
                         alert(data.message);
