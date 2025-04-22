@@ -108,16 +108,19 @@
                                 </thead>
                                 <tbody>`;
                     console.log('Order Status History:', data.transactions);
-                    if (data.transactions.status_type) {
-                        html += `<tr>
-                                    <td>${data.transactions.status_type}</td>
-                                    <td>${new Date(data.transactions.updated_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                                </tr>`;
+                    if (data.transactions.length > 0) {
+                        data.transactions.forEach(transaction => {
+                            html += `<tr>
+                                        <td>${transaction.status_type}</td>
+                                        <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                                    </tr>`;
+                        });
                     } else {
                         html += `<tr>
                                     <td colspan="2">No status history available</td>
                                 </tr>`;
                     }
+
                     html += `</tbody></table>`;
 
                     document.getElementById('detailModalBody').innerHTML = html;
