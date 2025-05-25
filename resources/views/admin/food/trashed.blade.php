@@ -1,20 +1,25 @@
 @extends('admin_layouts.admin')
 
 @section('content')
-    <div class="container">
-        <h1>Food List</h1>
-        <a href="{{ route('admin.food.create') }}" class="btn btn-primary mb-3">Add New Food</a>
-        <a href="{{ route('admin.food.trashed') }}" class="btn btn-outline-secondary mb-3">Deleted Food</a>
+<div class="container">
+    <h1>Trashed Food List</h1>
+
+    <a href="{{ route('admin.food.index') }}" class="btn btn-secondary mb-3">Back to Food List</a>
+
+    @if ($menus->isEmpty())
+        <div class="alert alert-info">No trashed food found.</div>
+    @else
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Description</th>
                     <th>Nutrition Fact</th>
+                    <th>Description</th>
                     <th>Price</th>
                     <th>Stock</th>
                     <th>Category</th>
+                    <th>Deleted At</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -27,19 +32,20 @@
                         <td>{{ $food->description }}</td>
                         <td>{{ $food->price }}</td>
                         <td>{{ $food->stock }}</td>
-                        <td>{{ $food->category->name }}</td>
+                        <td>{{ $food->category->name ?? '-' }}</td>
+                        <td>{{ $food->deleted_at->format('d M Y H:i') }}</td>
                         <td>
-                            <a href="{{ route('admin.food.edit', $food->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('admin.food.destroy', $food->id) }}" method="POST" style="display:inline;"
-                                onsubmit="return confirm('Are you sure you want to delete this menu?');">
+                            <!-- Restore -->
+                            <form action="{{ route('admin.food.restore', $food->id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                @method('PUT')
+                                <button class="btn btn-success btn-sm" onclick="return confirm('Restore this menu?')">Restore</button>
                             </form>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-    </div>
+    @endif
+</div>
 @endsection

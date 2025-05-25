@@ -50,6 +50,8 @@ Route::prefix('admin/food')->group(function () {
     Route::get('/{id}/edit', [FoodController::class, 'edit'])->name('admin.food.edit');
     Route::put('/{id}', [FoodController::class, 'update'])->name('admin.food.update');
     Route::delete('/{id}', [FoodController::class, 'destroy'])->name('admin.food.destroy');
+    Route::get('/trashed', [FoodController::class, 'trashed'])->name('admin.food.trashed');
+    Route::put('/restore/{id}', [FoodController::class, 'restore'])->name('admin.food.restore');
 });
 
 Route::prefix('admin/order')->group(function () {
@@ -66,6 +68,7 @@ Route::prefix('admin/order')->group(function () {
 
     Route::patch('/status/update/{invoice_number}', [OrderController::class, 'updateStatus'])->name('admin.order.updateStatus');
 });
+Route::get('/admin/category/trashed', [CategoryController::class, 'trashed'])->name('admin.category.trashed');
 
 Route::prefix('admin/category')->group(function () {
     Route::get('/', [CategoryController::class, 'index'])->name('admin.category.index');
@@ -75,6 +78,7 @@ Route::prefix('admin/category')->group(function () {
     Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
     Route::put('/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
     Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+    Route::put('/restore/{id}', [CategoryController::class, 'restore'])->name('admin.category.restore');
 });
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');

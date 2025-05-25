@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-
-    // Define the table associated with the model
+    use SoftDeletes;
     protected $table = 'categories';
 
     protected $primaryKey = 'id';
@@ -16,7 +16,7 @@ class Category extends Model
 
     protected $keyType = 'int';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'name',

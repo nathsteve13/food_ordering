@@ -5,6 +5,7 @@
         <h1>Category List</h1>
         <div class="mb-3">
             <a href="{{ route('admin.category.create') }}" class="btn btn-primary">Add Categories</a>
+            <a href="{{ route('admin.category.trashed') }}" class="btn btn-outline-secondary">Deleted Categories</a>
         </div>
         <table class="table table-bordered">
             <thead>

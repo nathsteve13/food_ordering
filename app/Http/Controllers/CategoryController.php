@@ -46,7 +46,10 @@ class CategoryController extends Controller
             return redirect()->route('admin.category.index')->with('success', 'Category created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withInput()->with('error', 'Failed to create category: ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create category: ' . $e->getMessage());
         }
     }
 
@@ -89,7 +92,10 @@ class CategoryController extends Controller
             return redirect()->route('admin.category.index')->with('success', 'Category updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withInput()->with('error', 'Failed to update category: ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to update category: ' . $e->getMessage());
         }
     }
 
@@ -111,7 +117,28 @@ class CategoryController extends Controller
             return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('admin.category.index')->with('error', 'Failed to delete category: ' . $e->getMessage());
+            return redirect()
+                ->route('admin.category.index')
+                ->with('error', 'Failed to delete category: ' . $e->getMessage());
+        }
+    }
+
+    public function trashed()
+    {
+        $categories = Category::onlyTrashed()->get();
+        return view('admin.category.trashed', compact('categories'));
+    }
+    public function restore($id)
+    {
+        try {
+            $category = Category::onlyTrashed()->findOrFail($id);
+            $category->restore();
+
+            return redirect()->route('admin.category.trashed')->with('success', 'Category restored successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.category.trashed')
+                ->with('error', 'Failed to restore category: ' . $e->getMessage());
         }
     }
 }

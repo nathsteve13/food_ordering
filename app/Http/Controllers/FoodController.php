@@ -16,7 +16,7 @@ class FoodController extends Controller
 {
     public function index()
     {
-        $menus = Menu::with('images','category')->get();
+        $menus = Menu::with('images', 'category')->get();
         return view('admin.food.index', compact('menus'));
     }
 
@@ -37,7 +37,7 @@ class FoodController extends Controller
             'stock' => 'required|integer',
             'description' => 'required',
             'ingredients.*' => 'nullable|exists:ingredients,id',
-            'new_ingredients.*' => 'nullable|string', 
+            'new_ingredients.*' => 'nullable|string',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
         ]);
 
@@ -184,6 +184,25 @@ class FoodController extends Controller
             return redirect()
                 ->route('admin.food.index')
                 ->with('error', 'Failed to delete menu: ' . $e->getMessage());
+        }
+    }
+
+    public function trashed()
+    {
+        $menus = Menu::onlyTrashed()->with('images', 'category')->get();
+        return view('admin.food.trashed', compact('menus'));
+    }
+    public function restore($id)
+    {
+        try {
+            $menu = Menu::onlyTrashed()->findOrFail($id);
+            $menu->restore();
+
+            return redirect()->route('admin.food.trashed')->with('success', 'Menu restored successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.food.trashed')
+                ->with('error', 'Failed to restore menu: ' . $e->getMessage());
         }
     }
 }
