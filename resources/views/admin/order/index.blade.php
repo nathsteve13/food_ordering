@@ -3,6 +3,11 @@
 @section('content')
     <div class="container">
         <h1>List Order</h1>
+
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createOrderModal">
+            Create Order
+        </button>
+
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -68,10 +73,167 @@
             </div>
         </div>
     </div>
+
+    <!-- Create Order Modal -->
+    <div class="modal fade" id="createOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <form action="{{ route('admin.orders.store') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Order</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- invoice, customer, subtotal, discount, total, order & payment type -->
+                            <div class="col-md-6">
+                                <label class="form-label">Invoice #</label>
+                                <input type="text" name="invoice_number" value="{{ old('invoice_number') }}"
+                                    class="form-control @error('invoice_number') is-invalid @enderror">
+                                @error('invoice_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Customer</label>
+                                <select name="users_id" class="form-select @error('users_id') is-invalid @enderror">
+                                    <option disabled selected>Choose…</option>
+                                    @foreach ($customers as $c)
+                                        <option value="{{ $c->id }}"
+                                            {{ old('users_id') == $c->id ? 'selected' : '' }}>
+                                            {{ $c->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('users_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Subtotal</label>
+                                <input type="number" name="subtotal" value="{{ old('subtotal') }}"
+                                    class="form-control @error('subtotal') is-invalid @enderror">
+                                @error('subtotal')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Discount</label>
+                                <input type="number" name="discount" value="{{ old('discount', 0) }}"
+                                    class="form-control @error('discount') is-invalid @enderror">
+                                @error('discount')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Total</label>
+                                <input type="number" name="total" value="{{ old('total') }}"
+                                    class="form-control @error('total') is-invalid @enderror">
+                                @error('total')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Order Type</label>
+                                <select name="order_type" class="form-select @error('order_type') is-invalid @enderror">
+                                    <option disabled selected>Choose…</option>
+                                    @foreach ($orderTypes as $t)
+                                        <option value="{{ $t }}"
+                                            {{ old('order_type') == $t ? 'selected' : '' }}>
+                                            {{ ucfirst($t) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('order_type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Payment Type</label>
+                                <select name="payment_type" class="form-select @error('payment_type') is-invalid @enderror">
+                                    <option disabled selected>Choose…</option>
+                                    @foreach ($paymentTypes as $p)
+                                        <option value="{{ $p }}"
+                                            {{ old('payment_type') == $p ? 'selected' : '' }}>
+                                            {{ ucfirst($p) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('payment_type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h5>Order Items</h5>
+                        <table class="table" id="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Menu</th>
+                                    <th>Portion</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Notes</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="item-row">
+                                    <td>
+                                        <select name="items[0][menus_id]" class="form-select">
+                                            <option disabled selected>Choose…</option>
+                                            @foreach ($menus as $m)
+                                                <option value="{{ $m->id }}">{{ $m->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="items[0][portion]" class="form-control"></td>
+                                    <td><input type="number" name="items[0][quantity]" class="form-control"></td>
+                                    <td><input type="number" name="items[0][total]" class="form-control"></td>
+                                    <td><input type="text" name="items[0][notes]" class="form-control"></td>
+                                    <td><button type="button" class="btn btn-danger remove-item">–</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" id="add-item" class="btn btn-secondary">Add Item</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Order</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
+        let idx = 1;
+        document.getElementById('add-item').addEventListener('click', () => {
+            const tpl = document.querySelector('.item-row');
+            const tr = tpl.cloneNode(true);
+            tr.querySelectorAll('select, input').forEach(el => {
+                const name = el.getAttribute('name')
+                    .replace(/\[0\]/, `[${idx}]`);
+                el.setAttribute('name', name);
+                el.value = '';
+            });
+            document.querySelector('#items-table tbody').append(tr);
+            idx++;
+        });
+
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-item')) {
+                const rows = document.querySelectorAll('.item-row');
+                if (rows.length > 1) e.target.closest('tr').remove();
+            }
+        });
+
         function showDetailModal(invoiceNumber) {
             fetch(`/admin/order/detail/${invoiceNumber}`)
                 .then(response => response.json())

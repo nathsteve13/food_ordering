@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetailTransaction;
-use App\Models\Transaction;
-use App\Models\OrderStatus;
+use App\Models\Menu;
 use App\Models\User;
+use App\Models\OrderStatus;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Models\DetailTransaction;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['orderStatus', 'user'])->get();
-        return view('admin.order.index', compact('transactions'));
+        $transactions  = Transaction::with(['orderStatus', 'user'])->get();
+        $customers     = User::all();
+        $menus         = Menu::all();
+        $orderTypes    = ['dinein','takeaway'];
+        $paymentTypes  = ['qris','credit','debit','e-wallet'];
+
+        return view('admin.order.index', compact(
+            'transactions','customers','menus','orderTypes','paymentTypes'
+        ));
     }
 
 
@@ -41,27 +49,65 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'invoice_number' => 'required|unique:transactions,invoice_number',
-            'subtotal' => 'required|numeric',
-            'discount' => 'required|numeric',
-            'total' => 'required|numeric',
-            'order_type' => 'required|in:dinein,takeaway',
-            'payment_type' => 'required|in:qris,credit,debit,e-wallet',
-            'users_id' => 'required|exists:users,id',
+        $v = $request->validate([
+            'invoice_number'            => 'required|unique:transactions,invoice_number',
+            'subtotal'                  => 'required|numeric',
+            'discount'                  => 'required|numeric',
+            'total'                     => 'required|numeric',
+            'order_type'                => 'required|in:dinein,takeaway',
+            'payment_type'              => 'required|in:qris,credit,debit,e-wallet',
+            'users_id'                  => 'required|exists:users,id',
+            'items'                     => 'required|array|min:1',
+            'items.*.menus_id'          => 'required|exists:menus,id',
+            'items.*.portion'           => 'required|string|max:50',
+            'items.*.quantity'          => 'required|integer|min:1',
+            'items.*.total'             => 'required|numeric',
+            'items.*.notes'             => 'nullable|string|max:255',
         ]);
+
 
         DB::beginTransaction();
         try {
-            Transaction::create($validated);
-            DB::commit();
+            // 1) Header transaksi
+            $tx = Transaction::create([
+                'invoice_number' => $v['invoice_number'],
+                'subtotal'       => $v['subtotal'],
+                'discount'       => $v['discount'],
+                'total'          => $v['total'],
+                'order_type'     => $v['order_type'],
+                'payment_type'   => $v['payment_type'],
+                'users_id'       => $v['users_id'],
+            ]);
 
-            return redirect()->route('admin.order.index')->with('success', 'Transaction created successfully.');
+            // 2) Detail transaksi
+            foreach($v['items'] as $it) {
+                DetailTransaction::create([
+                    'transactions_invoice_number' => $tx->invoice_number,
+                    'menus_id'                    => $it['menus_id'],
+                    'portion'                     => $it['portion'],
+                    'quantity'                    => $it['quantity'],
+                    'total'                       => $it['total'],
+                    'notes'                       => $it['notes'] ?? null,
+                ]);
+            }
+
+            // 3) Initial status “pending”
+            OrderStatus::create([
+                'transactions_invoice_number' => $tx->invoice_number,
+                'status_type'                 => 'pending',
+            ]);
+
+            DB::commit();
+            return redirect()->route('admin.order.index')
+                             ->with('success','Transaction created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('admin.order.index')->with('error', 'Failed to create transaction: ' . $e->getMessage());
+            dd($e->getMessage());
+            return redirect()->route('admin.order.index')
+                             ->with('error','Failed to create transaction: '.$e->getMessage());
         }
     }
+
 
     public function show($invoice_number)
     {
