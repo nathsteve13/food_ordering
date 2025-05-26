@@ -14,14 +14,18 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $transactions  = Transaction::with(['orderStatus', 'user'])->get();
-        $customers     = User::all();
-        $menus         = Menu::all();
-        $orderTypes    = ['dinein','takeaway'];
-        $paymentTypes  = ['qris','credit','debit','e-wallet'];
+        $transactions = Transaction::with(['orderStatus', 'user'])->get();
+        $customers = User::all();
+        $menus = Menu::all();
+        $orderTypes = ['dinein', 'takeaway'];
+        $paymentTypes = ['qris', 'credit', 'debit', 'e-wallet'];
 
         return view('admin.order.index', compact(
-            'transactions','customers','menus','orderTypes','paymentTypes'
+            'transactions',
+            'customers',
+            'menus',
+            'orderTypes',
+            'paymentTypes'
         ));
     }
 
@@ -50,19 +54,19 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $v = $request->validate([
-            'invoice_number'            => 'required|unique:transactions,invoice_number',
-            'subtotal'                  => 'required|numeric',
-            'discount'                  => 'required|numeric',
-            'total'                     => 'required|numeric',
-            'order_type'                => 'required|in:dinein,takeaway',
-            'payment_type'              => 'required|in:qris,credit,debit,e-wallet',
-            'users_id'                  => 'required|exists:users,id',
-            'items'                     => 'required|array|min:1',
-            'items.*.menus_id'          => 'required|exists:menus,id',
-            'items.*.portion'           => 'required|string|max:50',
-            'items.*.quantity'          => 'required|integer|min:1',
-            'items.*.total'             => 'required|numeric',
-            'items.*.notes'             => 'nullable|string|max:255',
+            'invoice_number' => 'required|unique:transactions,invoice_number',
+            'subtotal' => 'required|numeric',
+            'discount' => 'required|numeric',
+            'total' => 'required|numeric',
+            'order_type' => 'required|in:dinein,takeaway',
+            'payment_type' => 'required|in:qris,credit,debit,e-wallet',
+            'users_id' => 'required|exists:users,id',
+            'items' => 'required|array|min:1',
+            'items.*.menus_id' => 'required|exists:menus,id',
+            'items.*.portion' => 'required|string|max:50',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.total' => 'required|numeric',
+            'items.*.notes' => 'nullable|string|max:255',
         ]);
 
 
@@ -71,40 +75,40 @@ class OrderController extends Controller
             // 1) Header transaksi
             $tx = Transaction::create([
                 'invoice_number' => $v['invoice_number'],
-                'subtotal'       => $v['subtotal'],
-                'discount'       => $v['discount'],
-                'total'          => $v['total'],
-                'order_type'     => $v['order_type'],
-                'payment_type'   => $v['payment_type'],
-                'users_id'       => $v['users_id'],
+                'subtotal' => $v['subtotal'],
+                'discount' => $v['discount'],
+                'total' => $v['total'],
+                'order_type' => $v['order_type'],
+                'payment_type' => $v['payment_type'],
+                'users_id' => $v['users_id'],
             ]);
 
             // 2) Detail transaksi
-            foreach($v['items'] as $it) {
+            foreach ($v['items'] as $it) {
                 DetailTransaction::create([
                     'transactions_invoice_number' => $tx->invoice_number,
-                    'menus_id'                    => $it['menus_id'],
-                    'portion'                     => $it['portion'],
-                    'quantity'                    => $it['quantity'],
-                    'total'                       => $it['total'],
-                    'notes'                       => $it['notes'] ?? null,
+                    'menus_id' => $it['menus_id'],
+                    'portion' => $it['portion'],
+                    'quantity' => $it['quantity'],
+                    'total' => $it['total'],
+                    'notes' => $it['notes'] ?? null,
                 ]);
             }
 
             // 3) Initial status “pending”
             OrderStatus::create([
                 'transactions_invoice_number' => $tx->invoice_number,
-                'status_type'                 => 'pending',
+                'status_type' => 'pending',
             ]);
 
             DB::commit();
             return redirect()->route('admin.order.index')
-                             ->with('success','Transaction created successfully.');
+                ->with('success', 'Transaction created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
             return redirect()->route('admin.order.index')
-                             ->with('error','Failed to create transaction: '.$e->getMessage());
+                ->with('error', 'Failed to create transaction: ' . $e->getMessage());
         }
     }
 
@@ -196,6 +200,25 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Failed to update status: ' . $e->getMessage()], 500);
+        }
+    }
+    public function trashed()
+    {
+        $orders = Transaction::onlyTrashed()->with('user')->get();
+
+        return view('admin.order.trashed', compact('orders'));
+    }
+    public function restore($invoice_number)
+    {
+        try {
+            $order = Transaction::onlyTrashed()->findOrFail($invoice_number);
+            $order->restore();
+
+            return redirect()->route('admin.order.trashed')->with('success', 'Order restored successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.order.trashed')
+                ->with('error', 'Failed to restore order: ' . $e->getMessage());
         }
     }
 }

@@ -8,6 +8,8 @@
             Create Order
         </button>
 
+        <a href="{{ route('admin.order.trashed') }}" class="btn btn-outline-secondary mb-3">Deleted Order</a>
+
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -52,6 +54,12 @@
                             <button class="btn btn-info btn-sm" onclick="showDetailModal('{{ $order->invoice_number }}')">
                                 Detail
                             </button>
+                            <form action="{{ route('admin.order.destroy', $order->invoice_number) }}" method="POST" style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

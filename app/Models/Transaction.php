@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
+    use SoftDeletes;
     protected $primaryKey = 'invoice_number';
     public $incrementing = false;
     protected $keyType = 'string';
+    public $timestamps = true;
 
     protected $fillable = [
         'invoice_number', 'subtotal', 'discount', 'total', 'order_type', 'payment_type', 'users_id'

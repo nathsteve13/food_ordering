@@ -55,6 +55,8 @@ Route::prefix('admin/food')->group(function () {
 });
 
 Route::prefix('admin/order')->group(function () {
+    Route::get('/trashed', [OrderController::class, 'trashed'])->name('admin.order.trashed');
+    Route::put('/restore/{invoice_number}', [OrderController::class, 'restore'])->name('admin.order.restore');
     Route::get('/', [OrderController::class, 'index'])->name('admin.order.index');
     Route::get('/create', [OrderController::class, 'create'])->name('admin.order.create');
 
