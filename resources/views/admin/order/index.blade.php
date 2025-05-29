@@ -41,8 +41,7 @@
                                 data-invoice="{{ $order->invoice_number }}">
                                 <option selected disabled>Pilih status</option>
                                 @foreach (['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}"
-                                        {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}" {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
@@ -54,7 +53,8 @@
                             <button class="btn btn-info btn-sm" onclick="showDetailModal('{{ $order->invoice_number }}')">
                                 Detail
                             </button>
-                            <form action="{{ route('admin.order.destroy', $order->invoice_number) }}" method="POST" style="display:inline;"
+                            <form action="{{ route('admin.order.destroy', $order->invoice_number) }}" method="POST"
+                                style="display:inline;"
                                 onsubmit="return confirm('Are you sure you want to delete this order?');">
                                 @csrf
                                 @method('DELETE')
@@ -108,8 +108,7 @@
                                 <select name="users_id" class="form-select @error('users_id') is-invalid @enderror">
                                     <option disabled selected>Choose…</option>
                                     @foreach ($customers as $c)
-                                        <option value="{{ $c->id }}"
-                                            {{ old('users_id') == $c->id ? 'selected' : '' }}>
+                                        <option value="{{ $c->id }}" {{ old('users_id') == $c->id ? 'selected' : '' }}>
                                             {{ $c->name }}
                                         </option>
                                     @endforeach
@@ -149,8 +148,7 @@
                                 <select name="order_type" class="form-select @error('order_type') is-invalid @enderror">
                                     <option disabled selected>Choose…</option>
                                     @foreach ($orderTypes as $t)
-                                        <option value="{{ $t }}"
-                                            {{ old('order_type') == $t ? 'selected' : '' }}>
+                                        <option value="{{ $t }}" {{ old('order_type') == $t ? 'selected' : '' }}>
                                             {{ ucfirst($t) }}
                                         </option>
                                     @endforeach
@@ -164,8 +162,7 @@
                                 <select name="payment_type" class="form-select @error('payment_type') is-invalid @enderror">
                                     <option disabled selected>Choose…</option>
                                     @foreach ($paymentTypes as $p)
-                                        <option value="{{ $p }}"
-                                            {{ old('payment_type') == $p ? 'selected' : '' }}>
+                                        <option value="{{ $p }}" {{ old('payment_type') == $p ? 'selected' : '' }}>
                                             {{ ucfirst($p) }}
                                         </option>
                                     @endforeach
@@ -247,48 +244,48 @@
                 .then(response => response.json())
                 .then(data => {
                     let html = `<table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Menu</th>
-                                            <th>Portion</th>
-                                            <th>Quantity</th>
-                                            <th>Total</th>
-                                            <th>Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
+                                        <thead>
+                                            <tr>
+                                                <th>Menu</th>
+                                                <th>Portion</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
                     data.details.forEach(item => {
                         html += `<tr>
-                                    <td>${item.menu.name}</td>
-                                    <td>${item.portion}</td>
-                                    <td>${item.quantity}</td>
-                                    <td>Rp ${item.total}</td>
-                                    <td>${item.notes ?? '-'}</td>
-                                </tr>`;
+                                        <td>${item.menu.name}</td>
+                                        <td>${item.portion}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>Rp ${item.total}</td>
+                                        <td>${item.notes ?? '-'}</td>
+                                    </tr>`;
                     });
                     html += `</tbody></table>`;
 
                     html += `<h5>Order Status History</h5>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Updated At</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Updated At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
                     console.log('Order Status History:', data.transactions);
                     if (data.transactions.length > 0) {
                         data.transactions.forEach(transaction => {
                             html += `<tr>
-                                        <td>${transaction.status_type}</td>
-                                        <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                                    </tr>`;
+                                            <td>${transaction.status_type}</td>
+                                            <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                                        </tr>`;
                         });
                     } else {
                         html += `<tr>
-                                    <td colspan="2">No status history available</td>
-                                </tr>`;
+                                        <td colspan="2">No status history available</td>
+                                    </tr>`;
                     }
 
                     html += `</tbody></table>`;
@@ -305,30 +302,26 @@
     </script>
 
     <script>
-        document.querySelectorAll('.update-status-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const invoiceNumber = this.dataset.invoice;
-                const select = document.querySelector(`.status-dropdown[data-invoice="${invoiceNumber}"]`);
-                const selectedStatus = select.value;
+        $(document).ready(function () {
+            $('.update-status-btn').on('click', function () {
+                var invoiceNumber = $(this).data('invoice');
+                var selectedStatus = $('.status-dropdown[data-invoice="' + invoiceNumber + '"]').val();
 
-                fetch(`/admin/order/status/update/${invoiceNumber}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            status_type: selectedStatus
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
+                $.ajax({
+                    type: 'PATCH',
+                    url: '/admin/order/status/update/' + invoiceNumber,
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        status_type: selectedStatus
+                    },
+                    success: function (data) {
                         alert(data.message);
-                    })
-                    .catch(error => {
+                    },
+                    error: function (xhr, status, error) {
                         console.error('Error updating status:', error);
                         alert('Gagal memperbarui status.');
-                    });
+                    }
+                });
             });
         });
     </script>
