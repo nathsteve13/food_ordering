@@ -44,6 +44,7 @@ class FoodController extends Controller
         DB::beginTransaction();
 
         try {
+
             $menu = Menu::create([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -72,14 +73,20 @@ class FoodController extends Controller
                 }
             }
 
-            if ($request->has('new_ingredients')) {
+            if ($request->new_ingredients !== null) {
                 foreach ($request->new_ingredients as $newIngredient) {
-                    $newIngredient = Ingredient::create(['name' => $newIngredient]);
+                    if (empty($newIngredient)) {
+                        continue;
+                    }
+                    else {
+                        $newIngredient = Ingredient::create(['name' => $newIngredient]);
 
-                    MenusHasIngredient::create([
-                        'menus_id' => $menu->id,
-                        'ingredients_id' => $newIngredient->id,
-                    ]);
+                        MenusHasIngredient::create([
+                            'menus_id' => $menu->id,
+                            'ingredients_id' => $newIngredient->id,
+                        ]);
+                    }
+
                 }
             }
 
@@ -87,6 +94,7 @@ class FoodController extends Controller
 
             return redirect()->route('admin.food.index')->with('success', 'Menu created successfully with images and ingredients.');
         } catch (\Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             return redirect()
                 ->back()

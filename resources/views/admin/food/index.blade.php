@@ -27,7 +27,7 @@
                         <td>{{ $food->description }}</td>
                         <td>{{ $food->price }}</td>
                         <td>{{ $food->stock }}</td>
-                        <td>{{ $food->category->name }}</td>
+                        <td>{{ $food->category->name ?? 0}}</td>
                         <td>
                             <a href="{{ route('admin.food.edit', $food->id) }}" class="btn btn-warning btn-sm">Edit</a>
                             <form action="{{ route('admin.food.destroy', $food->id) }}" method="POST" style="display:inline;"
