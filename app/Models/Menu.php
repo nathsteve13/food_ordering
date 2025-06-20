@@ -12,7 +12,7 @@ class Menu extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $fillable = [
-        'name', 'description', 'nutrition_fact', 'price', 'stock'
+        'name', 'description', 'nutrition_fact', 'price', 'stock', 'categories_id'
     ];
 
     public function details()
