@@ -47,6 +47,8 @@ Route::prefix('admin/food')->group(function () {
     
     // Routing untuk halaman detail produk
 
+    Route::get('/detail/{id}', [FoodController::class, 'detail'])->name('admin.food.detail');
+
     Route::get('/{id}/edit', [FoodController::class, 'edit'])->name('admin.food.edit');
     Route::put('/{id}', [FoodController::class, 'update'])->name('admin.food.update');
     Route::delete('/{id}', [FoodController::class, 'destroy'])->name('admin.food.destroy');

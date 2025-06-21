@@ -77,8 +77,7 @@ class FoodController extends Controller
                 foreach ($request->new_ingredients as $newIngredient) {
                     if (empty($newIngredient)) {
                         continue;
-                    }
-                    else {
+                    } else {
                         $newIngredient = Ingredient::create(['name' => $newIngredient]);
 
                         MenusHasIngredient::create([
@@ -121,7 +120,8 @@ class FoodController extends Controller
             return redirect()->route('food.index')->with('error', 'Menu not found.');
         }
         $kategories = Category::all();
-        return view('admin.food.edit', compact('food', 'kategories'));
+        $allIngredients = Ingredient::all();
+        return view('admin.food.edit', compact('food', 'kategories', 'allIngredients'));
     }
 
     public function update(Request $request, $id)
@@ -134,6 +134,10 @@ class FoodController extends Controller
             'stock' => 'required|integer',
             'categories_id' => 'nullable|exists:categories,id',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
+            'ingredients' => 'nullable|array',
+            'ingredients.*' => 'exists:ingredients,id',
+            'new_ingredients' => 'nullable|array',
+            'new_ingredients.*' => 'nullable|string|max:255',
         ]);
 
         $food = Menu::findOrFail($id);
@@ -141,7 +145,15 @@ class FoodController extends Controller
         DB::beginTransaction();
 
         try {
-            $food->update($request->only(['name', 'description', 'nutrition_fact', 'price', 'stock', 'categories_id']));
+            // Update menu utama
+            $food->update($request->only([
+                'name',
+                'description',
+                'nutrition_fact',
+                'price',
+                'stock',
+                'categories_id'
+            ]));
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
@@ -151,6 +163,19 @@ class FoodController extends Controller
                         'menus_id' => $food->id,
                         'image_path' => $imagePath,
                     ]);
+                }
+            }
+
+            $ingredientIds = $request->input('ingredients', []);
+            $food->ingredients()->sync($ingredientIds);
+
+            if ($request->filled('new_ingredients')) {
+                foreach ($request->input('new_ingredients') as $name) {
+                    $name = trim($name);
+                    if ($name !== '') {
+                        $ingredient = Ingredient::firstOrCreate(['name' => $name]);
+                        $food->ingredients()->attach($ingredient->id);
+                    }
                 }
             }
 
@@ -164,6 +189,7 @@ class FoodController extends Controller
                 ->with('error', 'Failed to update menu: ' . $e->getMessage());
         }
     }
+
 
     public function destroy($id)
     {
@@ -212,5 +238,13 @@ class FoodController extends Controller
                 ->route('admin.food.trashed')
                 ->with('error', 'Failed to restore menu: ' . $e->getMessage());
         }
+    }
+    public function detail($id)
+    {
+        $menu = Menu::with(['ingredients'])->findOrFail($id);
+
+        return response()->json([
+            'ingredients' => $menu->ingredients,
+        ]);
     }
 }
