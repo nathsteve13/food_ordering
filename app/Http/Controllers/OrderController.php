@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\DetailTransaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -32,18 +33,28 @@ class OrderController extends Controller
 
     public function detail($invoice_number)
     {
-        $details = DetailTransaction::with(['transaction', 'menu'])->where('transactions_invoice_number', $invoice_number)->get();
-        $transactions = DB::table('transactions')
-            ->join('order_status', 'transactions.invoice_number', '=', 'order_status.transactions_invoice_number')
-            ->where('transactions.invoice_number', $invoice_number)
-            ->select('order_status.status_type', 'order_status.created_at')
-            ->get();
+        try {
+            $details = DetailTransaction::with(['menu', 'excludedIngredients.ingredient'])
+                ->where('transactions_invoice_number', $invoice_number)
+                ->get();
 
-        return response()->json([
-            'details' => $details,
-            'transactions' => $transactions,
-        ]);
+            $transactions = DB::table('order_status')
+                ->where('transactions_invoice_number', $invoice_number)
+                ->select('status_type', 'created_at')
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            return response()->json([
+                'details' => $details,
+                'transactions' => $transactions,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('[DETAIL ERROR] ' . $e->getMessage());
+            return response()->json(['error' => 'Server error'], 500);
+        }
     }
+
+
 
 
     public function create()
@@ -191,12 +202,10 @@ class OrderController extends Controller
                 throw new \Exception('Invalid status transition.');
             }
 
-            // Jika status yang diupdate sama dengan status saat ini, jangan buat status baru
             if ($currentStatus === $validated['status_type']) {
                 return response()->json(['message' => 'Status is already up-to-date']);
             }
 
-            // Selalu buat status baru jika berbeda
             $order->orderStatus()->create([
                 'transactions_invoice_number' => $invoice_number,
                 'status_type' => $validated['status_type'],

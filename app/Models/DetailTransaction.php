@@ -19,4 +19,13 @@ class DetailTransaction extends Model
     {
         return $this->belongsTo(Menu::class, 'menus_id');
     }
+
+    public function excludedIngredients()
+    {
+        return $this->hasMany(DetailTransactionExclude::class, 'detail_transaction_id')
+                    ->with('ingredient');
+    }
+
+
+
 }
