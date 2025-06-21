@@ -39,9 +39,11 @@
                         <td>
                             <select class="form-select form-select-sm d-inline-block w-auto me-1 status-dropdown"
                                 data-invoice="{{ $order->invoice_number }}">
-                                <option selected disabled>Pilih status</option>
+                                @php
+                                    $currentStatus = $order->orderStatus->status_type ?? 'pending';
+                                @endphp
                                 @foreach (['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}" {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
@@ -244,48 +246,48 @@
                 .then(response => response.json())
                 .then(data => {
                     let html = `<table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Menu</th>
-                                                <th>Portion</th>
-                                                <th>Quantity</th>
-                                                <th>Total</th>
-                                                <th>Notes</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>`;
+                                            <thead>
+                                                <tr>
+                                                    <th>Menu</th>
+                                                    <th>Portion</th>
+                                                    <th>Quantity</th>
+                                                    <th>Total</th>
+                                                    <th>Notes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>`;
                     data.details.forEach(item => {
                         html += `<tr>
-                                        <td>${item.menu.name}</td>
-                                        <td>${item.portion}</td>
-                                        <td>${item.quantity}</td>
-                                        <td>Rp ${item.total}</td>
-                                        <td>${item.notes ?? '-'}</td>
-                                    </tr>`;
+                                            <td>${item.menu.name}</td>
+                                            <td>${item.portion}</td>
+                                            <td>${item.quantity}</td>
+                                            <td>Rp ${item.total}</td>
+                                            <td>${item.notes ?? '-'}</td>
+                                        </tr>`;
                     });
                     html += `</tbody></table>`;
 
                     html += `<h5>Order Status History</h5>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Status</th>
-                                            <th>Updated At</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Status</th>
+                                                <th>Updated At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
                     console.log('Order Status History:', data.transactions);
                     if (data.transactions.length > 0) {
                         data.transactions.forEach(transaction => {
                             html += `<tr>
-                                            <td>${transaction.status_type}</td>
-                                            <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                                        </tr>`;
+                                                <td>${transaction.status_type}</td>
+                                                <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                                            </tr>`;
                         });
                     } else {
                         html += `<tr>
-                                        <td colspan="2">No status history available</td>
-                                    </tr>`;
+                                            <td colspan="2">No status history available</td>
+                                        </tr>`;
                     }
 
                     html += `</tbody></table>`;
