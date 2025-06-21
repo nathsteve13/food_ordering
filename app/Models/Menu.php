@@ -22,7 +22,7 @@ class Menu extends Model
 
     public function ingredients()
     {
-        return $this->belongsToMany(Ingredient::class, 'menus_has_ingredients');
+        return $this->belongsToMany(Ingredient::class, 'menus_has_ingredients', 'menus_id', 'ingredients_id');
     }
     public function category()
     {

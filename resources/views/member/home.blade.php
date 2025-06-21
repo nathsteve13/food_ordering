@@ -26,7 +26,7 @@
                                                     Now</a>
                                             </div>
                                             <div class="img-wrapper col-md-5">
-                                                <img src="https://www.masakapahariini.com/wp-content/uploads/2022/12/nasi-goreng-seafood-jawa-timur.jpg"class="img-fluid">
+                                                <img src="images/makanan_berat.jpeg"class="img-fluid">
                                             </div>
                                         </div>
                                     </div>

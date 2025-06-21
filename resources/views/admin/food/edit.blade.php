@@ -41,7 +41,47 @@
             <label class="form-label">Gambar</label>
             <input type="file" name="images[]" class="form-control" multiple>
         </div>
+        <div class="mb-3">
+    <label class="form-label">Bahan Makanan</label>
+    <div class="row">
+        @foreach ($allIngredients as $ingredient)
+            <div class="col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="ingredients[]"
+                           value="{{ $ingredient->id }}"
+                           id="ingredient_{{ $ingredient->id }}"
+                           {{ in_array($ingredient->id, $food->ingredients->pluck('id')->toArray()) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="ingredient_{{ $ingredient->id }}">
+                        {{ $ingredient->name }}
+                    </label>
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Tambah Bahan Baru</label>
+    <div id="new-ingredients-wrapper">
+        <input type="text" name="new_ingredients[]" class="form-control mb-2" placeholder="Nama bahan baru">
+    </div>
+    <button type="button" class="btn btn-sm btn-secondary" id="add-new-ingredient">+ Tambah Bahan Baru</button>
+</div>
         <button type="submit" class="btn btn-success">Simpan</button>
     </form>
 </div>
+
+<script>
+    document.getElementById('add-new-ingredient').addEventListener('click', function () {
+        const wrapper = document.getElementById('new-ingredients-wrapper');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'new_ingredients[]';
+        input.className = 'form-control mb-2';
+        input.placeholder = 'Nama bahan baru';
+        wrapper.appendChild(input);
+    });
+</script>
 @endsection
