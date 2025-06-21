@@ -418,7 +418,6 @@
             <div class="col-md-12">
 
                 <div class="section-header d-flex justify-content-between">
-
                     <h2 class="section-title">Most popular products</h2>
 
                     <div class="d-flex align-items-center">
@@ -449,6 +448,7 @@
                             </figure>
                             <h3>Sunstar Fresh Melon Juice</h3>
                             <span class="qty">1 Unit</span><span class="rating"><svg width="24"
+
                                     height="24" class="text-primary">
                                     <use xlink:href="#star-solid"></use>
                                 </svg> 4.5</span>

@@ -18,10 +18,9 @@
                                         <div class="row banner-content p-5">
                                             <div class="content-wrapper col-md-7">
                                                 <div class="categories my-3">100% Delicious</div>
-                                                <h3 class="display-4">Fried Rice Seafood</h3>
-                                                <p>Seafood fried rice is a flavorful Indonesian dish made with stir-fried rice, fresh seafood like shrimp,
-                                                     squid, and fish, combined with vegetables, garlic, and special seasonings.
-                                                     It offers a delicious blend of savory, slightly spicy, and smoky tastes in every bite.</p>
+                                                <h3 class="display-4">Salmon Grilled</h3>
+                                                <p>Grilled salmon is a healthy and delicious dish made by cooking fresh salmon over an open flame or grill. 
+                                                    It has a tender, juicy texture with a slightly smoky flavor, often seasoned with herbs, lemon, and garlic to enhance its natural taste.</p>
                                                 <a href="#"
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop
                                                     Now</a>
@@ -38,7 +37,7 @@
                         </div>
 
                         <div class="banner-ad bg-success-subtle block-2"
-                            style="background:url('images/ad-image-1.png') no-repeat;background-position: right bottom">
+                            style="background:url('images/ad-image-4.png') no-repeat;background-position: right bottom">
                             <div class="row banner-content p-5">
 
                                 <div class="content-wrapper col-md-7">
@@ -54,7 +53,7 @@
                         </div>
 
                         <div class="banner-ad bg-danger block-3"
-                            style="background:url('images/ad-image-2.png') no-repeat;background-position: right bottom">
+                            style="background:url('images/minuman.jpeg') no-repeat;background-position: right bottom">
                             <div class="row banner-content p-5">
 
                                 <div class="content-wrapper col-md-7">
