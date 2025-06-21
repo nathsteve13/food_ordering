@@ -32,16 +32,11 @@ class OrderController extends Controller
 
     public function detail($invoice_number)
     {
-        // Ambil detail berdasarkan invoice + menu
-        $details = DetailTransaction::with('menu')
-            ->where('transactions_invoice_number', $invoice_number)
-            ->get();
-
-        // Ambil histori status
-        $transactions = DB::table('order_status')
-            ->where('transactions_invoice_number', $invoice_number)
-            ->select('status_type', 'created_at')
-            ->orderBy('created_at', 'asc')
+        $details = DetailTransaction::with(['transaction', 'menu'])->where('transactions_invoice_number', $invoice_number)->get();
+        $transactions = DB::table('transactions')
+            ->join('order_status', 'transactions.invoice_number', '=', 'order_status.transactions_invoice_number')
+            ->where('transactions.invoice_number', $invoice_number)
+            ->select('order_status.status_type', 'order_status.created_at')
             ->get();
 
         return response()->json([
@@ -49,7 +44,6 @@ class OrderController extends Controller
             'transactions' => $transactions,
         ]);
     }
-
 
 
     public function create()
@@ -190,16 +184,23 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
-            if ($order->orderStatus) {
-                $order->orderStatus->update([
-                    'status_type' => $validated['status_type'],
-                ]);
-            } else {
-                $order->orderStatus()->create([
-                    'transactions_invoice_number' => $invoice_number,
-                    'status_type' => $validated['status_type'],
-                ]);
+            $currentStatus = $order->orderStatus->status_type ?? null;
+
+            if (($currentStatus === 'proccessed' && $validated['status_type'] === 'pending') ||
+                ($currentStatus === 'ready' && $validated['status_type'] === 'proccessed')) {
+                throw new \Exception('Invalid status transition.');
             }
+
+            // Jika status yang diupdate sama dengan status saat ini, jangan buat status baru
+            if ($currentStatus === $validated['status_type']) {
+                return response()->json(['message' => 'Status is already up-to-date']);
+            }
+
+            // Selalu buat status baru jika berbeda
+            $order->orderStatus()->create([
+                'transactions_invoice_number' => $invoice_number,
+                'status_type' => $validated['status_type'],
+            ]);
 
             DB::commit();
             return response()->json(['message' => 'Status updated successfully']);

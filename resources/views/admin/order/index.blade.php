@@ -316,6 +316,7 @@
                     },
                     success: function (data) {
                         alert(data.message);
+                        location.reload();
                     },
                     error: function (xhr, status, error) {
                         console.error('Error updating status:', error);
