@@ -39,9 +39,11 @@
                         <td>
                             <select class="form-select form-select-sm d-inline-block w-auto me-1 status-dropdown"
                                 data-invoice="{{ $order->invoice_number }}">
-                                <option selected disabled>Pilih status</option>
+                                @php
+                                    $currentStatus = $order->orderStatus->status_type ?? 'pending';
+                                @endphp
                                 @foreach (['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}" {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
