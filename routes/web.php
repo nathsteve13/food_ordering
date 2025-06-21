@@ -63,6 +63,7 @@ Route::prefix('admin/order')->group(function () {
     Route::get('/detail/{invoice_number}', [OrderController::class, 'detail']);
 
     Route::post('/', [OrderController::class, 'store'])->name('admin.orders.store');
+    Route::get('/api/invoice-latest-number', [OrderController::class, 'getLatestInvoiceNumber']);
     Route::get('/{invoice_number}', [OrderController::class, 'show'])->name('admin.order.show');
     Route::get('/{invoice_number}/edit', [OrderController::class, 'edit'])->name('admin.order.edit');
     Route::put('/{invoice_number}', [OrderController::class, 'update'])->name('admin.order.update');

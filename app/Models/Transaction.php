@@ -27,6 +27,13 @@ class Transaction extends Model
         return $this->hasMany(DetailTransaction::class, 'transactions_invoice_number');
     }
 
+    public static function generateInvoiceNumber()
+    {
+        $today = now()->format('Y-m-d');
+        $count = self::whereDate('created_at', now())->count() + 1;
+        return 'INV-' . now()->format('Y-m-d') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+    }
+
     public function orderStatus()
     {
         return $this->hasOne(OrderStatus::class, 'transactions_invoice_number', 'invoice_number')

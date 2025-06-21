@@ -30,6 +30,14 @@ class OrderController extends Controller
         ));
     }
 
+    public function getLatestInvoiceNumber()
+    {
+        $today = now()->format('Ymd');
+        $count = Transaction::whereDate('created_at', today())->count() + 1;
+        $formatted = str_pad($count, 4, '0', STR_PAD_LEFT);
+        $result = "INV-".$today."-".$formatted;
+        return $result;
+    }
 
     public function detail($invoice_number)
     {
@@ -54,9 +62,6 @@ class OrderController extends Controller
         }
     }
 
-
-
-
     public function create()
     {
         return view('admin.order.create');
@@ -64,10 +69,12 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'discount' => preg_replace('/[^0-9.]/', '', $request->discount),
+        ]);
         $v = $request->validate([
-            'invoice_number' => 'required|unique:transactions,invoice_number',
             'subtotal' => 'required|numeric',
-            'discount' => 'required|numeric',
+            'discount' => 'required|string',
             'total' => 'required|numeric',
             'order_type' => 'required|in:dinein,takeaway',
             'payment_type' => 'required|in:qris,credit,debit,e-wallet',
@@ -76,37 +83,44 @@ class OrderController extends Controller
             'items.*.menus_id' => 'required|exists:menus,id',
             'items.*.portion' => 'required|string|max:50',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.subtotal' => 'required|numeric',
             'items.*.total' => 'required|numeric',
             'items.*.notes' => 'nullable|string|max:255',
         ]);
-
-
+        
+        $discountValue = 0;
+        if (str_contains($v['discount'], '%')) {
+            $percentage = floatval(str_replace('%', '', $v['discount']));
+            $discountValue = $v['subtotal'] * ($percentage / 100);
+        } else {
+            $discountValue = $v['subtotal'] * (floatval($v['discount']) /100);
+        }
         DB::beginTransaction();
+        $invoice_number = $this->getLatestInvoiceNumber();
+        
         try {
-            // 1) Header transaksi
             $tx = Transaction::create([
-                'invoice_number' => $v['invoice_number'],
+                'invoice_number' => $invoice_number,
                 'subtotal' => $v['subtotal'],
-                'discount' => $v['discount'],
-                'total' => $v['total'],
+                'discount' => $discountValue,
+                'total' => $v['subtotal'] - $discountValue,
                 'order_type' => $v['order_type'],
                 'payment_type' => $v['payment_type'],
                 'users_id' => $v['users_id'],
             ]);
-
-            // 2) Detail transaksi
+            
             foreach ($v['items'] as $it) {
                 DetailTransaction::create([
                     'transactions_invoice_number' => $tx->invoice_number,
                     'menus_id' => $it['menus_id'],
                     'portion' => $it['portion'],
                     'quantity' => $it['quantity'],
+                    'subtotal' => $it['subtotal'],
                     'total' => $it['total'],
                     'notes' => $it['notes'] ?? null,
                 ]);
             }
-
-            // 3) Initial status “pending”
+            
             OrderStatus::create([
                 'transactions_invoice_number' => $tx->invoice_number,
                 'status_type' => 'pending',
@@ -114,15 +128,14 @@ class OrderController extends Controller
 
             DB::commit();
             return redirect()->route('admin.order.index')
-                ->with('success', 'Transaction created successfully.');
+                ->with('success', 'Order berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
-            return redirect()->route('admin.order.index')
-                ->with('error', 'Failed to create transaction: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal menyimpan order: ' . $e->getMessage());
         }
     }
-
 
     public function show($invoice_number)
     {
@@ -148,13 +161,11 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
-            // Jika sudah ada status, update
             if ($order->orderStatus) {
                 $order->orderStatus->update([
                     'status_type' => $validated['status_type'],
                 ]);
             } else {
-                // Jika belum ada status, buat baru
                 $order->orderStatus()->create([
                     'transactions_invoice_number' => $invoice_number,
                     'status_type' => $validated['status_type'],
@@ -218,12 +229,14 @@ class OrderController extends Controller
             return response()->json(['message' => 'Failed to update status: ' . $e->getMessage()], 500);
         }
     }
+
     public function trashed()
     {
         $orders = Transaction::onlyTrashed()->with('user')->get();
 
         return view('admin.order.trashed', compact('orders'));
     }
+
     public function restore($invoice_number)
     {
         try {
