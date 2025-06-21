@@ -7,9 +7,11 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FrontendController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Models\Frontend;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +24,7 @@ use App\Http\Controllers\Auth\RegisterController;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [FrontendController::class, 'index'])->name('home');
 
 Route::get('/products', function () {
     return view('products.index');

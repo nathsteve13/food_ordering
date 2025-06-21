@@ -1,20 +1,27 @@
 <div class="col">
     <div class="product-item">
-        <a href="{{ route('products.show', ['id' => $i]) }}" title="Product Title">
-        <span class="badge bg-success position-absolute m-3">-30%</span>
-        <a href="#" class="btn-wishlist"><svg width="24" height="24">
-                <use xlink:href="#heart"></use>
-            </svg></a>
+        <a href="{{ route('products.show', ['id' => $menu->id]) }}" title="{{ $menu->name }}">
+        </a>
+
+
         <figure>
-            <a href="index.html" title="Product Title">
-                <img src="images/thumb-bananas.png" class="tab-image">
+            <a href="{{ route('products.show', ['id' => $menu->id]) }}" title="{{ $menu->name }}">
+                @php
+                    $imagePath = $menu->images->isNotEmpty()
+                        ? asset($menu->images->first()->image_path)
+                        : asset('images/categories/makanan_penutup.jpg');
+                @endphp
+
+                <img src="{{ $imagePath }}" alt="{{ $menu->name }}" class="tab-image">
+
             </a>
         </figure>
-        <h3>Sunstar Fresh Melon Juice</h3>
-        <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary">
-                <use xlink:href="#star-solid"></use>
-            </svg> 4.5</span>
-        <span class="price">$18.00</span>
+
+        <h3>{{ $menu->name }}</h3>
+        <span class="qty">{{ $menu->stock }} Unit</span>
+
+        <span class="price">Rp{{ number_format($menu->price, 0, ',', '.') }}</span>
+
         <div class="d-flex align-items-center justify-content-between">
             <div class="input-group product-qty">
                 <span class="input-group-btn">
@@ -33,7 +40,7 @@
                     </button>
                 </span>
             </div>
-            <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+            <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
         </div>
     </div>
 </div>

@@ -14,11 +14,9 @@
                 <div class="search-bar row bg-light p-2 my-2 rounded-4">
                     <div class="col-md-4 d-none d-md-block">
                         <select class="form-select border-0 bg-transparent">
-                            <option>All Categories</option>
-                            <option>Makanan Berat</option>
-                            <option>Makanan Penutup</option>
-                            <option>Cemilan</option>
-                            <option>Minuman</option>
+                            @foreach($categories as $kategori)
+                                <option>{{ $kategori->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-11 col-md-7">
@@ -37,48 +35,48 @@
             </div>
 
 
-                <ul class="d-flex justify-content-end list-unstyled m-0">
-                    <li>
-                        <a href="{{ route('login') }}" class="rounded-circle bg-light p-2 mx-1">
-                            <svg width="24" height="24" viewBox="0 0 24 24">
-                                <use xlink:href="#user"></use>
-                            </svg>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="rounded-circle bg-light p-2 mx-1">
-                            <svg width="24" height="24" viewBox="0 0 24 24">
-                                <use xlink:href="#heart"></use>
-                            </svg>
-                        </a>
-                    </li>
-                    <li class="d-lg-none">
-                        <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                            <svg width="24" height="24" viewBox="0 0 24 24">
-                                <use xlink:href="#cart"></use>
-                            </svg>
-                        </a>
-                    </li>
-                    <li class="d-lg-none">
-                        <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch">
-                            <svg width="24" height="24" viewBox="0 0 24 24">
-                                <use xlink:href="#search"></use>
-                            </svg>
-                        </a>
-                    </li>
-                </ul>
+            <ul class="d-flex justify-content-end list-unstyled m-0">
+                <li>
+                    <a href="{{ route('login') }}" class="rounded-circle bg-light p-2 mx-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <use xlink:href="#user"></use>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="rounded-circle bg-light p-2 mx-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <use xlink:href="#heart"></use>
+                        </svg>
+                    </a>
+                </li>
+                <li class="d-lg-none">
+                    <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <use xlink:href="#cart"></use>
+                        </svg>
+                    </a>
+                </li>
+                <li class="d-lg-none">
+                    <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <use xlink:href="#search"></use>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
 
-                <div class="cart text-end d-none d-lg-block dropdown">
-                    <button class="border-0 bg-transparent d-flex flex-column gap-2 lh-1" type="button"
-                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                        <span class="fs-6 text-muted dropdown-toggle">Your Cart</span>
-                    </button>
-                </div>
+            <div class="cart text-end d-none d-lg-block dropdown">
+                <button class="border-0 bg-transparent d-flex flex-column gap-2 lh-1" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                    <span class="fs-6 text-muted dropdown-toggle">Your Cart</span>
+                </button>
             </div>
-
         </div>
+
+    </div>
     </div>
     <div class="container-fluid">
         <div class="row py-3">
@@ -102,18 +100,12 @@
 
 
                             <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-3 mb-0">
-                                <li class="nav-item active">
-                                    <a href="#makananberat" class="nav-link">Makanan Berat</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a href="#minuman" class="nav-link">Minuman</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#cemilan" class="nav-link">Cemilan</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#makananpenutup" class="nav-link">Makanan Penutup</a>
-                                </li>
+                                @foreach($categories as $kategori)
+                                    <li class="nav-item">
+                                        <a href="#{{ Str::slug($kategori->name) }}"
+                                            class="nav-link">{{ $kategori->name }}</a>
+                                    </li>
+                                @endforeach
                             </ul>
 
                         </div>
