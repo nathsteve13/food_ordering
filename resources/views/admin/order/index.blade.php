@@ -243,49 +243,62 @@
             fetch(`/admin/order/detail/${invoiceNumber}`)
                 .then(response => response.json())
                 .then(data => {
-                    let html = `<table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Menu</th>
-                                                <th>Portion</th>
-                                                <th>Quantity</th>
-                                                <th>Total</th>
-                                                <th>Notes</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>`;
-                    data.details.forEach(item => {
-                        html += `<tr>
-                                        <td>${item.menu.name}</td>
-                                        <td>${item.portion}</td>
-                                        <td>${item.quantity}</td>
-                                        <td>Rp ${item.total}</td>
-                                        <td>${item.notes ?? '-'}</td>
-                                    </tr>`;
-                    });
-                    html += `</tbody></table>`;
-
-                    html += `<h5>Order Status History</h5>
+                    let html = `<h5 class="mb-3">Order Details</h5>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Status</th>
-                                            <th>Updated At</th>
+                                            <th>Menu</th>
+                                            <th>Portion</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th>Notes</th>
                                         </tr>
                                     </thead>
                                     <tbody>`;
-                    console.log('Order Status History:', data.transactions);
+
+                    data.details.forEach(item => {
+                        const excluded = item.excluded_ingredients && item.excluded_ingredients.length > 0
+                            ? item.excluded_ingredients.map(e => e.ingredient?.name).join(', ')
+                            : '-';
+
+                        html += `<tr>
+                                    <td>${item.menu.name}</td>
+                                    <td>${item.portion}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>Rp ${item.total}</td>
+                                    <td>${item.notes ?? '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-muted">
+                                        <small><strong>Excluded Ingredients:</strong> ${excluded}</small>
+                                    </td>
+                                </tr>`;
+                    });
+
+                    html += `</tbody></table>`;
+
+                    html += `<h5 class="mt-4">Order Status History</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Updated At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+
                     if (data.transactions.length > 0) {
                         data.transactions.forEach(transaction => {
                             html += `<tr>
-                                            <td>${transaction.status_type}</td>
-                                            <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                                        </tr>`;
+                                        <td>${transaction.status_type}</td>
+                                        <td>${new Date(transaction.created_at).toLocaleString('id-ID', {
+                                            dateStyle: 'medium',
+                                            timeStyle: 'short'
+                                        })}</td>
+                                    </tr>`;
                         });
                     } else {
-                        html += `<tr>
-                                        <td colspan="2">No status history available</td>
-                                    </tr>`;
+                        html += `<tr><td colspan="2">No status history available</td></tr>`;
                     }
 
                     html += `</tbody></table>`;
@@ -299,6 +312,7 @@
                     new bootstrap.Modal(document.getElementById('detailModal')).show();
                 });
         }
+
     </script>
 
     <script>
@@ -316,6 +330,7 @@
                     },
                     success: function (data) {
                         alert(data.message);
+                        location.reload();
                     },
                     error: function (xhr, status, error) {
                         console.error('Error updating status:', error);

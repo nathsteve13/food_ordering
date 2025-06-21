@@ -12,4 +12,9 @@ class Ingredient extends Model
     {
         return $this->belongsToMany(Menu::class, 'menus_has_ingredients');
     }
+    public function excludedInTransactions()
+    {
+        return $this->hasMany(DetailTransactionExclude::class, 'ingredients_id');
+    }
+
 }
