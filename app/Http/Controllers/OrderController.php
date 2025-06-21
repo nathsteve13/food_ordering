@@ -32,11 +32,16 @@ class OrderController extends Controller
 
     public function detail($invoice_number)
     {
-        $details = DetailTransaction::with(['transaction', 'menu'])->where('transactions_invoice_number', $invoice_number)->get();
-        $transactions = DB::table('transactions')
-            ->join('order_status', 'transactions.invoice_number', '=', 'order_status.transactions_invoice_number')
-            ->where('transactions.invoice_number', $invoice_number)
-            ->select('order_status.status_type', 'order_status.created_at')
+        // Ambil detail berdasarkan invoice + menu
+        $details = DetailTransaction::with('menu')
+            ->where('transactions_invoice_number', $invoice_number)
+            ->get();
+
+        // Ambil histori status
+        $transactions = DB::table('order_status')
+            ->where('transactions_invoice_number', $invoice_number)
+            ->select('status_type', 'created_at')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return response()->json([
@@ -44,6 +49,7 @@ class OrderController extends Controller
             'transactions' => $transactions,
         ]);
     }
+
 
 
     public function create()
