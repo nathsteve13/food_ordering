@@ -17,54 +17,20 @@
                                     <div class="swiper-slide">
                                         <div class="row banner-content p-5">
                                             <div class="content-wrapper col-md-7">
-                                                <div class="categories my-3">100% natural</div>
-                                                <h3 class="display-4">Fresh Smoothie & Summer Juice</h3>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa
-                                                    diam elementum.</p>
+                                                <div class="categories my-3">100% Delicious</div>
+                                                <h3 class="display-4">Fried Rice Seafood</h3>
+                                                <p>Seafood fried rice is a flavorful Indonesian dish made with stir-fried rice, fresh seafood like shrimp,
+                                                     squid, and fish, combined with vegetables, garlic, and special seasonings.
+                                                     It offers a delicious blend of savory, slightly spicy, and smoky tastes in every bite.</p>
                                                 <a href="#"
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop
                                                     Now</a>
                                             </div>
                                             <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-1.png" class="img-fluid">
+                                                <img src="https://www.masakapahariini.com/wp-content/uploads/2022/12/nasi-goreng-seafood-jawa-timur.jpg"class="img-fluid">
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="swiper-slide">
-                                        <div class="row banner-content p-5">
-                                            <div class="content-wrapper col-md-7">
-                                                <div class="categories mb-3 pb-3">100% natural</div>
-                                                <h3 class="banner-title">Fresh Smoothie & Summer Juice</h3>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa
-                                                    diam elementum.</p>
-                                                <a href="#"
-                                                    class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop
-                                                    Collection</a>
-                                            </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-1.png" class="img-fluid">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="swiper-slide">
-                                        <div class="row banner-content p-5">
-                                            <div class="content-wrapper col-md-7">
-                                                <div class="categories mb-3 pb-3">100% natural</div>
-                                                <h3 class="banner-title">Heinz Tomato Ketchup</h3>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa
-                                                    diam elementum.</p>
-                                                <a href="#"
-                                                    class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop
-                                                    Collection</a>
-                                            </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-2.png" class="img-fluid">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="swiper-pagination"></div>
 
@@ -76,8 +42,8 @@
                             <div class="row banner-content p-5">
 
                                 <div class="content-wrapper col-md-7">
-                                    <div class="categories sale mb-3 pb-3">20% off</div>
-                                    <h3 class="banner-title">Fruits & Vegetables</h3>
+                                    <div class="categories sale mb-3 pb-3">80% Happines + 20% Craving</div>
+                                    <h3 class="banner-title">Dessert</h3>
                                     <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg
                                             width="24" height="24">
                                             <use xlink:href="#arrow-right"></use>
@@ -92,8 +58,8 @@
                             <div class="row banner-content p-5">
 
                                 <div class="content-wrapper col-md-7">
-                                    <div class="categories sale mb-3 pb-3">15% off</div>
-                                    <h3 class="item-title">Baked Products</h3>
+                                    <div class="categories sale mb-3 pb-3">100% Thirsty</div>
+                                    <h3 class="item-title">Favorite Drink</h3>
                                     <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg
                                             width="24" height="24">
                                             <use xlink:href="#arrow-right"></use>
