@@ -17,7 +17,7 @@ class Menu extends Model
 
     public function details()
     {
-        return $this->hasMany(DetailTransaction::class);
+        return $this->hasMany(DetailTransaction::class, 'menus_id');
     }
 
     public function ingredients()

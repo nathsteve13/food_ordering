@@ -18,31 +18,19 @@
                                         <div class="row banner-content p-5">
                                             <div class="content-wrapper col-md-7">
                                                 <div class="categories my-3">100% Delicious</div>
-<<<<<<< Updated upstream
                                                 <h3 class="display-4">Salmon Grilled</h3>
                                                 <p>Grilled salmon is a healthy and delicious dish made by cooking fresh salmon over an open flame or grill. 
                                                     It has a tender, juicy texture with a slightly smoky flavor, often seasoned with herbs, lemon, and garlic to enhance its natural taste.</p>
-=======
-                                                <h3 class="display-4">Fried Rice Seafood</h3>
-                                                <p>Seafood fried rice is a flavorful Indonesian dish made with stir-fried
-                                                    rice, prawns, squid, and spices.</p>
->>>>>>> Stashed changes
                                                 <a href="#"
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop
                                                     Now</a>
                                             </div>
                                             <div class="img-wrapper col-md-5">
-<<<<<<< Updated upstream
                                                 <img src="images/categories/makanan_berat.jpeg"class="img-fluid">
-=======
-                                                <img src="images/ad-image-3.png" class="img-fluid">
->>>>>>> Stashed changes
                                             </div>
                                         </div>
                                     </div>
 
-<<<<<<< Updated upstream
-=======
                                     <div class="swiper-slide">
                                         <div class="row banner-content p-5">
                                             <div class="content-wrapper col-md-7">
@@ -78,7 +66,6 @@
                                     </div>
                                 </div>
 
->>>>>>> Stashed changes
                                 <div class="swiper-pagination"></div>
 
                             </div>
@@ -89,17 +76,10 @@
                             <div class="row banner-content p-5">
 
                                 <div class="content-wrapper col-md-7">
-<<<<<<< Updated upstream
-                                    <div class="categories sale mb-3 pb-3">80% Happines + 20% Craving</div>
-                                    <h3 class="banner-title">Dessert</h3>
-                                    <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg
-                                            width="24" height="24">
-=======
                                     <div class="categories sale mb-3 pb-3">20% off</div>
                                     <h3 class="banner-title">Fruits & Vegetables</h3>
                                     <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24"
                                             height="24">
->>>>>>> Stashed changes
                                             <use xlink:href="#arrow-right"></use>
                                         </svg></a>
                                 </div>
@@ -112,17 +92,10 @@
                             <div class="row banner-content p-5">
 
                                 <div class="content-wrapper col-md-7">
-<<<<<<< Updated upstream
-                                    <div class="categories sale mb-3 pb-3">100% Thirsty</div>
-                                    <h3 class="item-title">Favorite Drink</h3>
-                                    <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg
-                                            width="24" height="24">
-=======
                                     <div class="categories sale mb-3 pb-3">15% off</div>
                                     <h3 class="item-title">Baked Products</h3>
                                     <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24"
                                             height="24">
->>>>>>> Stashed changes
                                             <use xlink:href="#arrow-right"></use>
                                         </svg></a>
                                 </div>
@@ -248,18 +221,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-5">
-        <div class="container-fluid">
-            <div class="row">
-
-                @foreach (range(1, 2) as $i)
-                    @include('partials.event-card')
-                @endforeach
-
             </div>
         </div>
     </section>

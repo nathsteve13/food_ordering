@@ -20,7 +20,16 @@ class FrontendController extends Controller
             ->where('created_at', '>=', Carbon::now()->subDays(7))
             ->get();
 
-        return view('home', compact('recentMenus', 'menus'));
+        $bestSellingMenus = Menu::with('images')
+            ->join('detail_transactions', 'menus.id', '=', 'detail_transactions.menus_id')
+            ->select('menus.id', 'menus.name', 'menus.description', 'menus.price', 'menus.stock', 'menus.categories_id') // semua kolom yang dibutuhkan
+            ->selectRaw('SUM(detail_transactions.quantity) as total_sold')
+            ->groupBy('menus.id', 'menus.name', 'menus.description', 'menus.price', 'menus.stock', 'menus.categories_id')
+            ->orderByDesc('total_sold')
+            ->limit(10)
+            ->get();
+
+        return view('home', compact('recentMenus', 'menus', 'bestSellingMenus'));
     }
 
     /**
