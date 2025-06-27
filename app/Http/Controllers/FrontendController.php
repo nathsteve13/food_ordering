@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Frontend;
 use Illuminate\Http\Request;
 use App\Models\Menu;
+use App\Models\Category;
 use Carbon\Carbon;
 
 class FrontendController extends Controller
@@ -29,7 +30,9 @@ class FrontendController extends Controller
             ->limit(10)
             ->get();
 
-        return view('home', compact('recentMenus', 'menus', 'bestSellingMenus'));
+        $categories = Category::all();
+
+        return view('home', compact('recentMenus', 'menus', 'bestSellingMenus', 'categories'));
     }
 
     /**
