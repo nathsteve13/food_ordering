@@ -216,28 +216,6 @@
 
     @include('layouts.slider')
 
-    <section id="latest-blog" class="py-5">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="section-header d-flex align-items-center justify-content-between my-5">
-                    <h2 class="section-title">Our Recent Blog</h2>
-                    <div class="btn-wrap align-right">
-                        <a href="#" class="d-flex align-items-center nav-link">Read All Articles <svg width="24"
-                                height="24">
-                                <use xlink:href="#arrow-right"></use>
-                            </svg></a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-
-                @foreach (range(1, 3) as $i)
-                    @include('partials.blog-card')
-                @endforeach
-
-            </div>
-        </div>
-    </section>
 
     {{-- paling sering dicari --}}
     <section class="py-5">

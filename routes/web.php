@@ -104,6 +104,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory'])->name('menus.byCategory');
+// Detail Menu
+Route::get('/menus/{id}', [FrontendController::class, 'show'])->name('menus.show');
+
+// cart
+Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
+
 
 // Menampilkan data report
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
+

@@ -54,9 +54,11 @@ class FrontendController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Frontend $frontend)
+    public function show($id)
     {
-        //
+        $menu = Menu::with(['images', 'category', 'ingredients'])->findOrFail($id);
+
+        return view('menus.show', compact('menu'));
     }
 
     /**

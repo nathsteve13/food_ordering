@@ -1,11 +1,7 @@
 <div class="col">
     <div class="product-item">
-        <a href="{{ route('products.show', ['id' => $menu->id]) }}" title="{{ $menu->name }}">
-        </a>
-
-
         <figure>
-            <a href="{{ route('products.show', ['id' => $menu->id]) }}" title="{{ $menu->name }}">
+            <a href="{{ route('menus.show', $menu->id) }}" title="{{ $menu->name }}">
                 @php
                     $imagePath = $menu->images->isNotEmpty()
                         ? asset($menu->images->first()->image_path)
@@ -13,13 +9,14 @@
                 @endphp
 
                 <img src="{{ $imagePath }}" alt="{{ $menu->name }}" class="tab-image">
-
             </a>
         </figure>
 
-        <h3>{{ $menu->name }}</h3>
-        <span class="qty">{{ $menu->stock }} Unit</span>
+        <h3>
+            <a href="{{ route('menus.show', $menu->id) }}" class="text-dark">{{ $menu->name }}</a>
+        </h3>
 
+        <span class="qty">{{ $menu->stock }} Unit</span>
         <span class="price">Rp{{ number_format($menu->price, 0, ',', '.') }}</span>
 
         <div class="d-flex align-items-center justify-content-between">
@@ -40,6 +37,7 @@
                     </button>
                 </span>
             </div>
+
             <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
         </div>
     </div>
