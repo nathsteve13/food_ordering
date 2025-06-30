@@ -7,7 +7,6 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="banner-blocks">
-<<<<<<< Updated upstream
 
                         <div class="banner-ad large bg-info block-1">
 
@@ -19,7 +18,7 @@
                                             <div class="content-wrapper col-md-7">
                                                 <div class="categories my-3">100% Delicious</div>
                                                 <h3 class="display-4">Salmon Grilled</h3>
-                                                <p>Grilled salmon is a healthy and delicious dish made by cooking fresh salmon over an open flame or grill. 
+                                                <p>Grilled salmon is a healthy and delicious dish made by cooking fresh salmon over an open flame or grill.
                                                     It has a tender, juicy texture with a slightly smoky flavor, often seasoned with herbs, lemon, and garlic to enhance its natural taste.</p>
                                                 <a href="#"
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop
@@ -68,9 +67,6 @@
                             </div>
                         </div>
 
-=======
-                        <!-- Bisa tambahkan banner baru di sini jika dibutuhkan -->
->>>>>>> Stashed changes
                     </div>
                 </div>
             </div>

@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Cart;
+use App\Models\CartIngredients;
+use App\Models\Menu;
+use App\Models\User;
+use App\Models\Category;
 use App\Models\Frontend;
 use Illuminate\Http\Request;
-use App\Models\Menu;
-use App\Models\Category;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class FrontendController extends Controller
 {
@@ -58,12 +63,28 @@ class FrontendController extends Controller
 
     public function viewCart()
     {
-        $cart = Session::get('cart', []);
-        $total = collect($cart)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
-        });
+        $user = Auth::id() ? User::find(Auth::id()) : null;
 
-        return view('cart.index', compact('cart', 'total'));
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found.');
+        }
+
+        $cart = Cart::where('users_id', $user->id)
+            ->with('menu')
+            ->get()
+            ->toArray();
+        $cartDetails = CartIngredients::whereIn('cart_id', array_column($cart, 'id'))
+            ->with('menuIngredient')
+            ->get()
+            ->toArray();
+
+        $total = 0;
+
+        foreach ($cart as $item) {
+            $total += $item['menus_price'] * $item['quantity'];
+        }
+
+        return view('cart.index', compact('cart', 'total', 'cartDetails', 'user'));
     }
 
     public function removeFromCart($id)

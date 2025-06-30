@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -74,25 +75,35 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        try {
+            DB::beginTransaction();
+
+            $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'address' => 'required|string|max:255',
             'phone_numeber' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:6|confirmed',
-        ]);
-        
-        User::create([
+            ]);
+
+            User::create([
             'name' => $request->name,
             'email' => $request->email,
             'address' => $request->address,
             'phone_numeber' => $request->phone_numeber,
             'username' => $request->username,
             'password' => bcrypt($request->password),
-        ]);
+            ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
+            DB::commit();
+
+            return redirect()->route('login')->with('success', 'Registration successful! Please login.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Registration failed! Please try again.');
+        }
     }
 
 }
