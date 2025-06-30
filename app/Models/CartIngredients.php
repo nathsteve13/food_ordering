@@ -15,4 +15,12 @@ class CartIngredients extends Model
         'cart_id',
         'menus_has_ingredient_id',
     ];
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class, 'cart_id');
+    }
+    public function menuIngredient()
+    {
+        return $this->belongsTo(MenusHasIngredient::class, 'menus_has_ingredient_id');
+    }
 }
