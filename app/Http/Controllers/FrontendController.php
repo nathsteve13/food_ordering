@@ -70,11 +70,7 @@ class FrontendController extends Controller
         }
 
         $cart = Cart::where('users_id', $user->id)
-            ->with('menu')
-            ->get()
-            ->toArray();
-        $cartDetails = CartIngredients::whereIn('cart_id', array_column($cart, 'id'))
-            ->with('menuIngredient')
+            ->with(['menu', 'ingredients'])
             ->get()
             ->toArray();
 
@@ -84,7 +80,7 @@ class FrontendController extends Controller
             $total += $item['menus_price'] * $item['quantity'];
         }
 
-        return view('cart.index', compact('cart', 'total', 'cartDetails', 'user'));
+        return view('cart.index', compact('cart', 'total', 'cartDetails'));
     }
 
     public function removeFromCart($id)

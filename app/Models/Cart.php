@@ -28,4 +28,8 @@ class Cart extends Model
     {
         return $this->belongsTo(Menu::class, 'menus_id');
     }
+    public function ingredients()
+    {
+        return $this->belongsToMany(MenusHasIngredient::class, 'cart_ingredients', 'cart_id', 'menus_has_ingredient_id');
+    }
 }
