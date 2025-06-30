@@ -135,25 +135,14 @@
 
                     <div class="category-carousel swiper">
                         <div class="swiper-wrapper">
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-animal-products-drumsticks.png" alt="Heavy Meal">
-                                <h3 class="category-title">Makanan Berat</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-soft-drinks-bottle.png" alt="Drinks">
-                                <h3 class="category-title">Minuman</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-bread-baguette.png" alt="Snacks">
-                                <h3 class="category-title">Cemilan</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-bread-herb-flour.png" alt="Desserts">
-                                <h3 class="category-title">Makanan Penutup</h3>
-                            </a>
+                            @foreach ($categories as $category)
+                                <a href="{{ route('menus.byCategory', $category->id) }}" class="nav-link category-item swiper-slide">
+                                    {{-- <img src="{{ asset('images/default-category.png') }}" alt="{{ $category->name }}"> --}}
+                                    <h3 class="category-title">{{ $category->name }}</h3>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -227,28 +216,6 @@
 
     @include('layouts.slider')
 
-    <section id="latest-blog" class="py-5">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="section-header d-flex align-items-center justify-content-between my-5">
-                    <h2 class="section-title">Our Recent Blog</h2>
-                    <div class="btn-wrap align-right">
-                        <a href="#" class="d-flex align-items-center nav-link">Read All Articles <svg width="24"
-                                height="24">
-                                <use xlink:href="#arrow-right"></use>
-                            </svg></a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-
-                @foreach (range(1, 3) as $i)
-                    @include('partials.blog-card')
-                @endforeach
-
-            </div>
-        </div>
-    </section>
 
     {{-- paling sering dicari --}}
     <section class="py-5">

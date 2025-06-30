@@ -44,7 +44,7 @@ Route::prefix('admin/food')->group(function () {
     Route::get('/', [FoodController::class, 'index'])->name('admin.food.index');
     Route::get('/create', [FoodController::class, 'create'])->name('admin.food.create');
     Route::post('/', [FoodController::class, 'store'])->name('admin.food.store');
-    
+
     // Routing untuk halaman detail produk
 
     Route::get('/detail/{id}', [FoodController::class, 'detail'])->name('admin.food.detail');
@@ -103,8 +103,15 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory'])->name('menus.byCategory');
+// Detail Menu
+Route::get('/menus/{id}', [FrontendController::class, 'show'])->name('menus.show');
 
-//Menampilkan data report
+// cart
+Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
+
+
+// Menampilkan data report
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
 
 
