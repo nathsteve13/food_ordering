@@ -26,6 +26,27 @@
     </script>
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.product-item').forEach(item => {
+                const minus = item.querySelector('.quantity-left-minus');
+                const plus = item.querySelector('.quantity-right-plus');
+                const input = item.querySelector('input[name="quantity"]');
+
+                minus?.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    let qty = parseInt(input.value);
+                    if (qty > 1) input.value = qty - 1;
+                });
+
+                plus?.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    let qty = parseInt(input.value);
+                    input.value = qty + 1;
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

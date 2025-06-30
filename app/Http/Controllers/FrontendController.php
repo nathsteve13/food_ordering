@@ -31,6 +31,82 @@ class FrontendController extends Controller
 
         return view('home', compact('recentMenus', 'menus', 'bestSellingMenus'));
     }
+    public function addToCart(Request $request, $id)
+    {
+        $menu = Menu::findOrFail($id);
+
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                'name' => $menu->name,
+                'quantity' => 1,
+                'price' => $menu->price,
+                'image' => $menu->images->first()->image_path ?? 'images/default.jpg'
+            ];
+        }
+
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'Item added to cart!');
+    }
+
+
+    public function viewCart()
+    {
+        $cart = Session::get('cart', []);
+        $total = collect($cart)->sum(function ($item) {
+            return $item['price'] * $item['quantity'];
+        });
+
+        return view('cart.index', compact('cart', 'total'));
+    }
+
+    public function removeFromCart($id)
+    {
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+        }
+
+        return redirect()->back()->with('success', 'Item removed from cart!');
+    }
+
+
+    public function updateQuantity(Request $request)
+    {
+        $id = $request->input('id');
+        $quantity = $request->input('quantity');
+
+        // Ambil cart dari session
+        $cart = session()->get('cart', []);
+
+        // Kalau item-nya ada, update quantity-nya
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity'] = $quantity;
+
+            // Simpan kembali ke session
+            session()->put('cart', $cart);
+
+            // Hitung subtotal dan total baru
+            $subtotal = $cart[$id]['price'] * $quantity;
+            $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+            return response()->json([
+                'success' => true,
+                'subtotal' => $subtotal,
+                'total' => $total
+            ]);
+        }
+
+        // Kalau ID tidak ditemukan
+        return response()->json(['success' => false], 404);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

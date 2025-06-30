@@ -106,3 +106,22 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 //Menampilkan data report
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
+
+
+// Cart
+Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
+Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name('cart.checkout.process');
+
+
+// Cart untuk Frontend
+Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
+Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
+Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
+
+// Route::get('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
+
+
+
+
