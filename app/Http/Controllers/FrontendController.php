@@ -80,6 +80,8 @@ class FrontendController extends Controller
             $total += $item['menus_price'] * $item['quantity'];
         }
 
+        dd($cart);
+
         return view('cart.index', compact('cart', 'total'));
     }
 
