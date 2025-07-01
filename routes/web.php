@@ -103,17 +103,14 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/member/home', [HomeController::class, 'index'])->name('member.home');
+
 Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory'])->name('menus.byCategory');
 // Detail Menu
 Route::get('/menus/{id}', [FrontendController::class, 'show'])->name('menus.show');
 
-// cart
-Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
-
-
 // Menampilkan data report
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
-
 
 // Cart
 Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
@@ -124,7 +121,6 @@ Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name
 Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
 Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
 Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
-Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
 
 // Route::get('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');

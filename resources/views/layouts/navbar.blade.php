@@ -37,6 +37,10 @@
             </div>
             <div class="col-sm-2 col-lg-4 text-center text-lg-end mt-3">
                 @if(Auth::check())
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2">Logout</button>
+                    </form>
                     <a href="{{ route('cart.index') }}" class="btn btn-success rounded-pill px-4 py-2">
                         Cart
                     </a>

@@ -1,18 +1,18 @@
 @if($recentMenus->count())
     @foreach ($recentMenus as $menu)
         <div class="swiper-slide">
-            <div class="card mb-3 p-3 rounded-4 shadow border-0">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{ asset('storage/' . $menu->image_path) }}" class="img-fluid rounded"
-                            alt="{{ $menu->name }}">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body py-0">
-                            <p class="text-muted mb-0">{{ $menu->name }}</p>
-                            <h5 class="card-title">{{ $menu->description }}</h5>
-                        </div>
-                    </div>
+            <div class="card p-3 rounded-4 shadow border-0 h-100">
+                @php
+                    $imagePath = $menu->images->isNotEmpty()
+                        ? asset('storage/' . $menu->images->first()->image_path)
+                        : asset('images/categories/makanan_penutup.jpg');
+                @endphp
+
+                <img src="{{ $imagePath }}" alt="{{ $menu->name }}" class="img-fluid rounded mb-3" style="object-fit: cover; height: 180px; width: 100%;">
+
+                <div class="card-body py-0">
+                    <p class="text-muted mb-1">{{ $menu->name }}</p>
+                    <h5 class="card-title">{{ $menu->description }}</h5>
                 </div>
             </div>
         </div>
