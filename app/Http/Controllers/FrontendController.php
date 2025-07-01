@@ -35,6 +35,10 @@ class FrontendController extends Controller
 
         $categories = Category::all();
 
+        if (auth()->check()) {
+            return view('member.home', compact('recentMenus', 'menus', 'bestSellingMenus', 'categories'));
+        }
+
         return view('home', compact('recentMenus', 'menus', 'bestSellingMenus', 'categories'));
     }
     public function addToCart(Request $request, $id)
