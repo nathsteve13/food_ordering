@@ -26,6 +26,7 @@
     </script>
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.product-item').forEach(item => {
