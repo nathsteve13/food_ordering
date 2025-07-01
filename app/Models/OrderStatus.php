@@ -10,6 +10,7 @@ class OrderStatus extends Model
     protected $fillable = [
         'transactions_invoice_number', 'status_type'
     ];
+    public $timestamps = true;
 
     public function transaction()
     {

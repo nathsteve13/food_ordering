@@ -97,3 +97,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('orders.my')->middleware('auth');
+
+
+
+

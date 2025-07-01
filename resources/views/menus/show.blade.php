@@ -58,7 +58,7 @@
                             </ul>
                         @endif
                         <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
-                        <a href="{{ route('home') }}" class="btn btn-secondary mt-3">Back</a>
+                        <a href="{{ route('home') }}" class="btn btn-secondary mt-3">Back to home</a>
                     </form>
                 </div>
             </div>

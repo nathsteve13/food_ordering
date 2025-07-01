@@ -41,7 +41,7 @@ class OrderController extends Controller
         $today = now()->format('Ymd');
         $count = Transaction::whereDate('created_at', today())->count() + 1;
         $formatted = str_pad($count, 4, '0', STR_PAD_LEFT);
-        $result = "INV-".$today."-".$formatted;
+        $result = "INV-" . $today . "-" . $formatted;
         return $result;
     }
 
@@ -99,7 +99,7 @@ class OrderController extends Controller
             $percentage = floatval(str_replace('%', '', $v['discount']));
             $discountValue = $v['subtotal'] * ($percentage / 100);
         } else {
-            $discountValue = $v['subtotal'] * (floatval($v['discount']) /100);
+            $discountValue = $v['subtotal'] * (floatval($v['discount']) / 100);
         }
         DB::beginTransaction();
         $invoice_number = $this->getLatestInvoiceNumber();
@@ -222,8 +222,10 @@ class OrderController extends Controller
         try {
             $currentStatus = $order->orderStatus->status_type ?? null;
 
-            if (($currentStatus === 'proccessed' && $validated['status_type'] === 'pending') ||
-                ($currentStatus === 'ready' && $validated['status_type'] === 'proccessed')) {
+            if (
+                ($currentStatus === 'proccessed' && $validated['status_type'] === 'pending') ||
+                ($currentStatus === 'ready' && $validated['status_type'] === 'proccessed')
+            ) {
                 throw new \Exception('Invalid status transition.');
             }
 
@@ -265,6 +267,19 @@ class OrderController extends Controller
         }
     }
 
+    public function myOrders()
+    {
+        $transactions = Transaction::with([
+            'details.menu.ingredients',
+            'details.excludedIngredients.ingredient',
+            'details.menu.images',
+            'orderStatus',
+            'statusHistory'
+        ])
+            ->where('users_id', auth()->id())
+            ->latest()
+            ->get();
 
-
+        return view('myOrder.index', compact('transactions'));
+    }
 }

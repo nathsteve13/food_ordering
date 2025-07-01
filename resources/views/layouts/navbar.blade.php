@@ -14,7 +14,7 @@
                     <span class="text-black me-3">
                         Welcome, {{ Auth::user()->name ?? Auth::user()->username ?? 'User' }}
                     </span>
-                    <a class="btn btn-secondary rounded-pill px-4 py-2 me-2">
+                    <a href="{{ route('orders.my') }}" class="btn btn-secondary rounded-pill px-4 py-2 me-2">
                         My Orders
                     </a>
                     <form action="{{ route('logout') }}" method="POST" class="d-inline me-2">
