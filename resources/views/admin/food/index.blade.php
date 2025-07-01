@@ -42,6 +42,9 @@
                     </tr>
                 @endforeach
             </tbody>
+            <div class="d-flex justify-content-center mt-4">
+                {{ $menus->onEachSide(2)->links() }}
+            </div>
         </table>
     </div>
     <!-- Food Detail Modal -->

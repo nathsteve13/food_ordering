@@ -192,4 +192,12 @@ class FrontendController extends Controller
     {
         //
     }
+
+    public function showByCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        $menus = Menu::where('categories_id', $id)->get(); // sesuaikan nama kolom foreign key-nya
+
+        return view('menus.byCategory', compact('category', 'menus'));
+    }
 }
