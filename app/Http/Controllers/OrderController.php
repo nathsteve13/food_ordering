@@ -87,7 +87,7 @@ class OrderController extends Controller
             'items.*.total' => 'required|numeric',
             'items.*.notes' => 'nullable|string|max:255',
         ]);
-        
+
         $discountValue = 0;
         if (str_contains($v['discount'], '%')) {
             $percentage = floatval(str_replace('%', '', $v['discount']));
@@ -97,7 +97,7 @@ class OrderController extends Controller
         }
         DB::beginTransaction();
         $invoice_number = $this->getLatestInvoiceNumber();
-        
+
         try {
             $tx = Transaction::create([
                 'invoice_number' => $invoice_number,
@@ -108,7 +108,7 @@ class OrderController extends Controller
                 'payment_type' => $v['payment_type'],
                 'users_id' => $v['users_id'],
             ]);
-            
+
             foreach ($v['items'] as $it) {
                 DetailTransaction::create([
                     'transactions_invoice_number' => $tx->invoice_number,
@@ -120,7 +120,7 @@ class OrderController extends Controller
                     'notes' => $it['notes'] ?? null,
                 ]);
             }
-            
+
             OrderStatus::create([
                 'transactions_invoice_number' => $tx->invoice_number,
                 'status_type' => 'pending',
@@ -249,7 +249,7 @@ class OrderController extends Controller
                 ->route('admin.order.trashed')
                 ->with('error', 'Failed to restore order: ' . $e->getMessage());
         }
-    }       
+    }
 
     public function checkoutForm()
     {
@@ -270,6 +270,7 @@ class OrderController extends Controller
 
     public function processCheckout(Request $request)
     {
+        dd($request->all());
         $cart = session()->get('cart', []);
         if (empty($cart)) {
             return redirect()->back()->with('error', 'Cart is empty!');
@@ -319,6 +320,7 @@ class OrderController extends Controller
             DB::commit();
             return redirect()->route('admin.order.index')->with('success', 'Checkout berhasil!');
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
             return redirect()->back()->with('error', 'Checkout gagal: ' . $e->getMessage());
         }

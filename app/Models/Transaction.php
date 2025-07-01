@@ -29,9 +29,9 @@ class Transaction extends Model
 
     public static function generateInvoiceNumber()
     {
-        $today = now()->format('Y-m-d');
+        $today = now()->format('Ymd');
         $count = self::whereDate('created_at', now())->count() + 1;
-        return 'INV-' . now()->format('Y-m-d') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        return 'INV-' . now()->format('Ymd') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
     public function orderStatus()

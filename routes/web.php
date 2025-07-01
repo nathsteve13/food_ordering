@@ -115,8 +115,8 @@ Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
 
 // Cart
-Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
-Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name('cart.checkout.process');
+// Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
+// Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name('cart.checkout.process');
 
 
 // Cart untuk Frontend
