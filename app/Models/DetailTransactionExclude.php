@@ -10,6 +10,7 @@ class DetailTransactionExclude extends Model
     use HasFactory;
 
     protected $table = 'detail_transaction_excludes';
+    public $timestamps = true;
 
     protected $fillable = [
         'detail_transaction_id',
