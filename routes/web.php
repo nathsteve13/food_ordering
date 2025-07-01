@@ -108,7 +108,6 @@ Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory']
 Route::get('/menus/{id}', [FrontendController::class, 'show'])->name('menus.show');
 
 // cart
-Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
 
 
 // Menampilkan data report
@@ -121,13 +120,20 @@ Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name
 
 
 // Cart untuk Frontend
-Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
-Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
-Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
-Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
-
+// Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
+// Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
 // Route::get('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
+// // Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
+// Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
+    Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/update-quantity', [FrontendController::class, 'updateQuantity'])->name('cart.updateQuantity');
+});
+
+
 
 
 

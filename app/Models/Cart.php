@@ -21,7 +21,7 @@ class Cart extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'users_id');
     }
 
     public function menu()
@@ -30,6 +30,6 @@ class Cart extends Model
     }
     public function ingredients()
     {
-        return $this->belongsToMany(MenusHasIngredient::class, 'cart_ingredients', 'cart_id', 'menus_has_ingredient_id');
+        return $this->belongsToMany(MenusHasIngredient::class, 'cart_ingredients', 'cart_id', 'menu_has_ingredient_id');
     }
 }

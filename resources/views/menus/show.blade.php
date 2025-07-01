@@ -40,7 +40,7 @@
                     <p>{{ $menu->stock }} pcs</p>
 
                     <h4>Ingredients</h4>
-                    <form action="{{ route('cart.add') }}" method="POST">
+                    <form action="{{ route('cart.add', $menu->id) }}" method="POST">
                         @csrf
                         <input type="hidden" name="menu_id" value="{{ $menu->id }}">
 
@@ -49,17 +49,14 @@
                                 @foreach ($menu->ingredients as $ingredient)
                                     <li class="form-check">
                                         <input class="form-check-input" type="checkbox" name="ingredients[]"
-                                            value="{{ $ingredient->id }}" id="ingredient-{{ $ingredient->id }}" checked>
-                                        <label class="form-check-label" for="ingredient-{{ $ingredient->id }}">
+                                            value="{{ $ingredient->pivot->id }}" id="ingredient-{{ $ingredient->pivot->id }}" checked>
+                                        <label class="form-check-label" for="ingredient-{{ $ingredient->pivot->id }}">
                                             {{ $ingredient->name }}
                                         </label>
                                     </li>
                                 @endforeach
                             </ul>
-                        @else
-                            <p><em>No ingredients listed.</em></p>
                         @endif
-
                         <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
                     </form>
                 </div>

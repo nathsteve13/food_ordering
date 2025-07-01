@@ -37,13 +37,6 @@
                     </button>
                 </span>
             </div>
-            <form action="{{ route('cart.add', ['id' => $menu->id]) }}" method="POST" class="d-inline">
-                @csrf
-                <input type="hidden" name="quantity" class="cart-quantity" value="1">
-                <button type="submit" class="btn btn-primary">
-                    Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon>
-                </button>
-            </form>
         </div>
     </div>
 </div>

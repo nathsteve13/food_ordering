@@ -41,92 +41,103 @@ class FrontendController extends Controller
     }
     public function addToCart(Request $request, $id)
     {
-        $menu = Menu::findOrFail($id);
+        $menu = Menu::with('images')->findOrFail($id);
+        $userId = auth()->id();
 
-        $cart = session()->get('cart', []);
+        // Cek apakah cart untuk user dan menu ini sudah ada
+        $cart = Cart::firstOrNew([
+            'users_id' => $userId,
+            'menus_id' => $menu->id,
+        ]);
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-        } else {
-            $cart[$id] = [
-                'name' => $menu->name,
-                'quantity' => 1,
-                'price' => $menu->price,
-                'image' => $menu->images->first()->image_path ?? 'images/default.jpg'
-            ];
+        $cart->menus_price = $menu->price;
+        $cart->quantity = $cart->exists ? $cart->quantity + 1 : 1;
+        $cart->save();
+
+        // Simpan ingredients (ID-nya berasal dari tabel menus_has_ingredients)
+        $ingredientIds = $request->input('ingredients', []);
+
+        foreach ($ingredientIds as $menuHasIngredientId) {
+            if (!empty($menuHasIngredientId)) {
+                CartIngredients::create([
+                    'cart_id' => $cart->id,
+                    'menu_has_ingredient_id' => $menuHasIngredientId,
+                ]);
+            }
         }
 
-        session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Item added to cart!');
+
+        return redirect()->route('cart.index')->with('success', 'Item added to cart!');
     }
+
+
 
 
     public function viewCart()
     {
-        $user = Auth::id() ? User::find(Auth::id()) : null;
+        $userId = auth()->id();
+        $cartItems = Cart::with(['menu.images', 'ingredients.ingredient'])
+            ->where('users_id', $userId)
+            ->get();
 
-        if (!$user) {
-            return redirect()->back()->with('error', 'User not found.');
-        }
+        $total = $cartItems->sum(fn($item) => $item->menus_price * $item->quantity);
 
-        $cart = Cart::where('users_id', $user->id)
-            ->with(['menu', 'ingredients'])
-            ->get()
-            ->toArray();
-
-        $total = 0;
-
-        foreach ($cart as $item) {
-            $total += $item['menus_price'] * $item['quantity'];
-        }
-
-        dd($cart);
-
-        return view('cart.index', compact('cart', 'total'));
+        return view('cart.index', compact('cartItems', 'total'));
     }
+
 
     public function removeFromCart($id)
     {
-        $cart = session()->get('cart', []);
+        $cart = Cart::findOrFail($id);
 
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
+        if ($cart->users_id !== auth()->id()) {
+            abort(403);
         }
 
-        return redirect()->back()->with('success', 'Item removed from cart!');
+        $cart->ingredients()->detach();
+        $cart->delete();
+
+        return redirect()->route('cart.index')->with('success', 'Item removed.');
     }
+
 
 
     public function updateQuantity(Request $request)
     {
-        $id = $request->input('id');
+        $cartId = $request->input('id');
         $quantity = $request->input('quantity');
 
-        // Ambil cart dari session
-        $cart = session()->get('cart', []);
+        // Cari cart berdasarkan ID
+        $cart = Cart::find($cartId);
 
-        // Kalau item-nya ada, update quantity-nya
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] = $quantity;
-
-            // Simpan kembali ke session
-            session()->put('cart', $cart);
-
-            // Hitung subtotal dan total baru
-            $subtotal = $cart[$id]['price'] * $quantity;
-            $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-
-            return response()->json([
-                'success' => true,
-                'subtotal' => $subtotal,
-                'total' => $total
-            ]);
+        // Jika cart tidak ditemukan
+        if (!$cart) {
+            return response()->json(['success' => false, 'message' => 'Cart not found'], 404);
         }
 
-        // Kalau ID tidak ditemukan
-        return response()->json(['success' => false], 404);
+        // Jangan izinkan jumlah < 1
+        if ($quantity < 1) {
+            return response()->json(['success' => false, 'message' => 'Quantity must be at least 1'], 422);
+        }
+
+        // Update quantity
+        $cart->quantity = $quantity;
+        $cart->save();
+
+        // Hitung subtotal dan total semua cart milik user
+        $subtotal = $cart->menus_price * $cart->quantity;
+
+        $userTotal = Cart::where('users_id', $cart->users_id)->get()->sum(function ($item) {
+            return $item->menus_price * $item->quantity;
+        });
+
+        return response()->json([
+            'success' => true,
+            'subtotal' => $subtotal,
+            'total' => $userTotal
+        ]);
     }
+
 
 
 

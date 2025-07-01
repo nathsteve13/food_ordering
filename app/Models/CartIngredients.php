@@ -13,7 +13,7 @@ class CartIngredients extends Model
     public $timestamps = true;
     protected $fillable = [
         'cart_id',
-        'menus_has_ingredient_id',
+        'menu_has_ingredient_id',
     ];
     public function cart()
     {
@@ -21,6 +21,6 @@ class CartIngredients extends Model
     }
     public function menuIngredient()
     {
-        return $this->belongsTo(MenusHasIngredient::class, 'menus_has_ingredient_id');
+        return $this->belongsTo(MenusHasIngredient::class, 'menu_has_ingredient_id');
     }
 }
