@@ -67,6 +67,11 @@
                     </tr>
                 @endforeach
             </tbody>
+            @if ($transactions->hasPages())
+            <div class="d-flex justify-content-center mt-4">
+                {{ $transactions->onEachSide(2)->links() }}
+            </div>
+            @endif
         </table>
     </div>
 

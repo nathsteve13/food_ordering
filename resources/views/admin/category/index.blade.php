@@ -32,6 +32,9 @@
                     </tr>
                 @endforeach
             </tbody>
+            <div class="d-flex justify-content-center mt-4">
+                {{ $categories->onEachSide(2)->links() }}
+            </div>
         </table>
     </div>
 @endsection

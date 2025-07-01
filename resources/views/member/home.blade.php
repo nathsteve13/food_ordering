@@ -86,22 +86,13 @@
                 <div class="col-md-12">
                     <div class="category-carousel swiper">
                         <div class="swiper-wrapper">
-                            <a href="#" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-animal-products-drumsticks.png" alt="Heavy Meal">
-                                <h3 class="category-title">Makanan Berat</h3>
-                            </a>
-                            <a href="#" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-soft-drinks-bottle.png" alt="Drinks">
-                                <h3 class="category-title">Minuman</h3>
-                            </a>
-                            <a href="#" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-bread-baguette.png" alt="Snacks">
-                                <h3 class="category-title">Cemilan</h3>
-                            </a>
-                            <a href="#" class="nav-link category-item swiper-slide">
-                                <img src="images/icon-bread-herb-flour.png" alt="Desserts">
-                                <h3 class="category-title">Makanan Penutup</h3>
-                            </a>
+                            @foreach ($categories as $category)
+                                <a href="{{ route('menus.byCategory', $category->id) }}" class="nav-link category-item swiper-slide">
+                                    {{-- Gambar default atau sesuai kategori --}}
+                                    <img src="{{ asset('images/app-store.jpg') }}" alt="{{ $category->name }}">
+                                    <h3 class="category-title">{{ $category->name }}</h3>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
