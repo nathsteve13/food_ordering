@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\CartIngredients;
 use App\Models\Menu;
 use App\Models\OrderType;
 use App\Models\PaymentType;
 use App\Models\Transaction;
+use Illuminate\Http\Request;
+use App\Models\CartIngredients;
 use App\Models\DetailTransaction;
 use App\Models\MenusHasIngredient;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\DetailTransactionExclude;
 
 class CartController extends Controller
 {
@@ -136,7 +137,7 @@ class CartController extends Controller
 
 
             foreach ($request->items as $item) {
-                DetailTransaction::create([
+                $detailTransaction = DetailTransaction::create([
                     'transactions_invoice_number' => $transaction->invoice_number,
                     'menus_id' => $item['menu_id'],
                     'portion' => $item['portion'],
@@ -148,30 +149,27 @@ class CartController extends Controller
                     ->where('menus_id', $item['menu_id'])
                     ->get()
                     ->toArray();
-                dd($menuIngredients);
-                foreach ($item['ingredients'] ?? [] as $ingredientId) {
-                    $orderIngredient = [];
+
+                foreach ($item['ingredients'] ?? [] as $ingredientRequest) {
 
                     foreach ($menuIngredients as $menuIngredient) {
-                        if (in_array($menuIngredient['ingredient']['name'], $item['ingredients'])) {
-                            $orderIngredient[] = [
-                                'transactions_invoice_number' => $transaction->invoice_number,
-                                'ingredient_id' => $menuIngredient['ingredient']['id'],
-                                'quantity' => $item['quantity'],
-                            ];
+                        if (!in_array($menuIngredient['ingredient']['name'], (array) $ingredientRequest)) {
+                            DetailTransactionExclude::create([
+                                'detail_transaction_id' => $detailTransaction->id,
+                                'ingredients_id' => $menuIngredient['ingredients_id'],
+                            ]);
+
                         }
                     }
-
                 }
             }
 
-            // Hapus semua item di cart setelah checkout
             Cart::where('users_id', $userId)->delete();
-
             DB::commit();
 
             return redirect()->route('cart.index')->with('success', 'Checkout successful!');
         } catch (\Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             return redirect()->route('cart.index')->with('error', 'Checkout failed: ' . $e->getMessage());
         }
