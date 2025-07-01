@@ -53,25 +53,14 @@ class CartController extends Controller
             $matchedCart = [];
 
             foreach ($existingCarts as $cart) {
-                $existingIngredientIds = [];
-                foreach ($cart->ingredients as $ingredient) {
-                    $engId = CartIngredients::where('cart_id', $cart->id)
-                        ->where('menu_has_ingredient_id', $ingredient->ingredients_id)
-                        ->first();
-                    if ($engId) {
-                        $existingIngredientIds[] = $engId;
-                    }
-                }
                 $ingredientIds = $request->ingredients ?? [];
-                $existingIngredientId = $cart->ingredients->pluck('ingredients_id')->toArray();
-
+                $existingIngredientId = $cart->ingredients->pluck('id')->toArray();
                 $ingredientIds = array_map('intval', $request->ingredients ?? []);
                 if (empty(array_diff($ingredientIds, $existingIngredientId)) && empty(array_diff($existingIngredientId, $ingredientIds))) {
                     $matchedCart = $cart;
                     break;
                 }
             }
-
             if ($matchedCart) {
                 $matchedCart->increment('quantity');
                 $matchedCart->save();
@@ -83,7 +72,7 @@ class CartController extends Controller
                     'quantity' => 1,
                 ]);
 
-                foreach ($ingredientIds as $menuHasIngredientId) {
+                foreach ($request->ingredients as $menuHasIngredientId) {
                     CartIngredients::create([
                         'cart_id' => $cart->id,
                         'menu_has_ingredient_id' => $menuHasIngredientId,
@@ -158,7 +147,7 @@ class CartController extends Controller
             'items.*.portion' => 'required|string|max:50',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric',
-
+            'items.*.notes' => 'nullable|string|max:255',
             'total' => 'required|numeric',
         ]);
 
@@ -176,27 +165,35 @@ class CartController extends Controller
             ]);
 
 
-            foreach ($request->items as $item) {
+            foreach ($request->items as $cartId => $item) {
+                $menu = Menu::findOrFail($item['menu_id']);
                 $detailTransaction = DetailTransaction::create([
                     'transactions_invoice_number' => $transaction->invoice_number,
                     'menus_id' => $item['menu_id'],
                     'portion' => $item['portion'],
                     'quantity' => $item['quantity'],
                     'total' => $item['price'] * $item['quantity'],
+                    'notes' => $item['notes'] ?? null,
                 ]);
+                $menu->decrement('stock', $item['quantity']);
 
                 $menuIngredients = MenusHasIngredient::with('ingredient')
                     ->where('menus_id', $item['menu_id'])
                     ->get()
                     ->toArray();
 
+                $userIncludedIngredientNames = $item['ingredients'] ?? [];
+
                 foreach ($item['ingredients'] ?? [] as $ingredientRequest) {
 
                     foreach ($menuIngredients as $menuIngredient) {
-                        if (!in_array($menuIngredient['ingredient']['name'], (array) $ingredientRequest)) {
+                        $ingredientName = $menuIngredient['ingredient']['name'];
+                        $ingredientId = $menuIngredient['ingredients_id'];
+
+                        if (!in_array($ingredientName, $userIncludedIngredientNames)) {
                             DetailTransactionExclude::create([
                                 'detail_transaction_id' => $detailTransaction->id,
-                                'ingredients_id' => $menuIngredient['ingredients_id'],
+                                'ingredients_id' => $ingredientId,
                             ]);
                         }
                     }

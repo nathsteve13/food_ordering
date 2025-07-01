@@ -11,7 +11,7 @@
             <li class="nav-item d-none d-md-block"><a href="{{ route('admin.category.index') }}" class="nav-link">Category</a></li>
             <li class="nav-item d-none d-md-block"><a href="{{ route('admin.food.index') }}" class="nav-link">Food</a></li>
             <li class="nav-item d-none d-md-block"><a href="{{ route('admin.order.index') }}" class="nav-link">Order</a></li>
-            <li class="nav-item d-none d-md-block"><a href="{{ route('admin.reports.index') }}" class="nav-link">Data Report</a></li>
+            <li class="nav-item d-none d-md-block"><a href="{{ route('admin.dashboard') }}" class="nav-link">Data Report</a></li>
         </ul>
         <ul class="navbar-nav ms-auto">
             <!-- Display username here -->

@@ -48,29 +48,51 @@ class OrderController extends Controller
     public function detail($invoice_number)
     {
         $user = auth()->user();
-        if (!$user || !$user->role || $user->role !== 'admin') {
+        if (!$user || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
+
         try {
-            $details = DetailTransaction::with(['menu', 'excludedIngredients.ingredient'])
+            $details = DetailTransaction::with(['menu.ingredients', 'excludedIngredients.ingredient'])
                 ->where('transactions_invoice_number', $invoice_number)
                 ->get();
-
             $transactions = DB::table('order_status')
                 ->where('transactions_invoice_number', $invoice_number)
                 ->select('status_type', 'created_at')
                 ->orderBy('created_at', 'asc')
                 ->get();
 
+            $formattedDetails = $details->map(function ($detail) {
+                $defaultIngredients = $detail->menu->ingredients;
+                $excludedIds = $detail->excludedIngredients->pluck('ingredients_id')->toArray();
+
+                $includedIngredients = $defaultIngredients->filter(function ($ingredient) use ($excludedIds) {
+                    return !in_array($ingredient->id, $excludedIds);
+                });
+                
+                return [
+                    'menu' => [
+                        'name' => $detail->menu->name,
+                    ],
+                    'portion' => $detail->portion,
+                    'quantity' => $detail->quantity,
+                    'total' => $detail->total,
+                    'notes' => $detail->notes,
+                    'included_ingredients' => $includedIngredients->pluck('name')->values(),
+                ];
+            });
+
             return response()->json([
-                'details' => $details,
+                'details' => $formattedDetails,
                 'transactions' => $transactions,
             ]);
+
         } catch (\Throwable $e) {
-            Log::error('[DETAIL ERROR] ' . $e->getMessage());
+            \Log::error('[DETAIL ERROR] ' . $e->getMessage());
             return response()->json(['error' => 'Server error'], 500);
         }
     }
+
 
 
     public function store(Request $request)
@@ -281,5 +303,64 @@ class OrderController extends Controller
             ->get();
 
         return view('myOrder.index', compact('transactions'));
+    }
+
+
+    public function processCheckout(Request $request)
+    {
+        dd($request->all());
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->back()->with('error', 'Cart is empty!');
+        }
+
+        $request->validate([
+            'users_id' => 'required|exists:users,id',
+            'order_type' => 'required|in:dinein,takeaway',
+            'payment_type' => 'required|in:qris,credit,debit,e-wallet',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $invoice_number = $this->getLatestInvoiceNumber();
+            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+            $discount = 0; // Bisa tambahkan logic diskon nanti
+
+            $transaction = Transaction::create([
+                'invoice_number' => $invoice_number,
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'total' => $subtotal - $discount,
+                'order_type' => $request->order_type,
+                'payment_type' => $request->payment_type,
+                'users_id' => $request->users_id,
+            ]);
+
+            foreach ($cart as $menuId => $item) {
+                DetailTransaction::create([
+                    'transactions_invoice_number' => $transaction->invoice_number,
+                    'menus_id' => $menuId,
+                    'portion' => 'Regular',
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['price'] * $item['quantity'],
+                    'total' => $item['price'] * $item['quantity'],
+                    'notes' => null,
+                ]);
+            }
+
+            OrderStatus::create([
+                'transactions_invoice_number' => $transaction->invoice_number,
+                'status_type' => 'pending',
+            ]);
+
+            session()->forget('cart');
+
+            DB::commit();
+            return redirect()->route('admin.order.index')->with('success', 'Checkout berhasil!');
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Checkout gagal: ' . $e->getMessage());
+        }
     }
 }

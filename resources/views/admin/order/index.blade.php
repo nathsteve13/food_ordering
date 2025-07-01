@@ -44,8 +44,7 @@
                                     $currentStatus = $order->orderStatus->status_type ?? 'pending';
                                 @endphp
                                 @foreach (['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}"
-                                        {{ $currentStatus === $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
@@ -272,7 +271,7 @@
             }
         });
 
-        document.addEventListener('input', function(e) {
+        document.addEventListener('input', function (e) {
             if (e.target.matches('[name$="[quantity]"]') || e.target.matches('[name$="[subtotal]"]')) {
                 recalculateItemTotal(e.target.closest('tr'));
             }
@@ -282,8 +281,8 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $('.update-status-btn').on('click', function() {
+        $(document).ready(function () {
+            $('.update-status-btn').on('click', function () {
                 var invoiceNumber = $(this).data('invoice');
                 var selectedStatus = $('.status-dropdown[data-invoice="' + invoiceNumber + '"]').val();
                 $.ajax({
@@ -293,7 +292,7 @@
                         _token: '{{ csrf_token() }}',
                         status_type: selectedStatus
                     },
-                    success: function(data) {
+                    success: function (data) {
                         alert(data.message);
                     }
                 });
@@ -320,51 +319,56 @@
 
                     // Membuat tampilan tabel detail transaksi
                     let html = `<table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Menu</th>
-                                    <th>Portion</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th>Notes</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                                <thead>
+                                    <tr>
+                                        <th>Menu</th>
+                                        <th>Portion</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th>Notes</th>
+                                        <th>Bahan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
 
                     data.details.forEach(item => {
+                        const ingredients = item.included_ingredients.length
+                            ? item.included_ingredients.join(', ')
+                            : 'All ingredients removed';
                         html += `<tr>
-                            <td>${item.menu.name}</td>
-                            <td>${item.portion}</td>
-                            <td>${item.quantity}</td>
-                            <td>Rp ${item.total}</td>
-                            <td>${item.notes ?? '-'}</td>
-                        </tr>`;
+                                <td>${item.menu.name}</td>
+                                <td>${item.portion}</td>
+                                <td>${item.quantity}</td>
+                                <td>Rp ${item.total}</td>
+                                <td>${item.notes ?? '-'}</td>
+                                <td>${ingredients}</td>
+                            </tr>`;
                     });
 
                     html += `</tbody></table>`;
 
                     // Menambahkan status history jika ada
                     html += `<h5>Order Status History</h5>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Status</th>
-                                    <th>Updated At</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Updated At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
 
                     if (data.transactions && data.transactions.length > 0) {
                         data.transactions.forEach(transaction => {
                             html += `<tr>
-                                <td>${transaction.status_type}</td>
-                                <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                            </tr>`;
+                                    <td>${transaction.status_type}</td>
+                                    <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                                </tr>`;
                         });
                     } else {
                         html += `<tr>
-                            <td colspan="2">No status history available</td>
-                        </tr>`;
+                                <td colspan="2">No status history available</td>
+                            </tr>`;
                     }
 
                     html += `</tbody></table>`;
