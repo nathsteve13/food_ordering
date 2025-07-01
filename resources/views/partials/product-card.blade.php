@@ -1,39 +1,23 @@
 <div class="col">
-    <div class="product-item">
-        <a href="{{ route('products.show', ['id' => $i]) }}" title="Product Title">
-        <span class="badge bg-success position-absolute m-3">-30%</span>
-        <a href="#" class="btn-wishlist"><svg width="24" height="24">
-                <use xlink:href="#heart"></use>
-            </svg></a>
-        <figure>
-            <a href="index.html" title="Product Title">
-                <img src="images/thumb-bananas.png" class="tab-image">
+    <div class="product-item h-100 d-flex flex-column">
+        <figure class="image-container mb-2" style="height: 180px; overflow: hidden;">
+            <a href="{{ route('menus.show', $menu->id) }}" title="{{ $menu->name }}">
+                @php
+                    $imagePath = $menu->images->isNotEmpty()
+                        ? asset('storage/' . $menu->images->first()->image_path)
+                        : asset('images/categories/makanan_penutup.jpg');
+                @endphp
+
+                <img src="{{ $imagePath }}" alt="{{ $menu->name }}" class="tab-image w-100 h-100"
+                     style="object-fit: cover;">
             </a>
         </figure>
-        <h3>Sunstar Fresh Melon Juice</h3>
-        <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary">
-                <use xlink:href="#star-solid"></use>
-            </svg> 4.5</span>
-        <span class="price">$18.00</span>
-        <div class="d-flex align-items-center justify-content-between">
-            <div class="input-group product-qty">
-                <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                        <svg width="16" height="16">
-                            <use xlink:href="#minus"></use>
-                        </svg>
-                    </button>
-                </span>
-                <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                        <svg width="16" height="16">
-                            <use xlink:href="#plus"></use>
-                        </svg>
-                    </button>
-                </span>
-            </div>
-            <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
-        </div>
+
+        <h3 class="mb-1">
+            <a href="{{ route('menus.show', $menu->id) }}" class="text-dark text-decoration-none">{{ $menu->name }}</a>
+        </h3>
+
+        <span class="qty text-muted small">{{ $menu->stock }} pcs</span>
+        <span class="price fw-bold">Rp{{ number_format($menu->price, 0, ',', '.') }}</span>
     </div>
 </div>

@@ -17,13 +17,15 @@ class Menu extends Model
 
     public function details()
     {
-        return $this->hasMany(DetailTransaction::class);
+        return $this->hasMany(DetailTransaction::class, 'menus_id');
     }
 
     public function ingredients()
     {
-        return $this->belongsToMany(Ingredient::class, 'menus_has_ingredients', 'menus_id', 'ingredients_id');
+        return $this->belongsToMany(Ingredient::class, 'menus_has_ingredients', 'menus_id', 'ingredients_id')
+                    ->withPivot('id');
     }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'categories_id');

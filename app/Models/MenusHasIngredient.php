@@ -17,6 +17,10 @@ class MenusHasIngredient extends Model
 
     public function ingredient()
     {
-        return $this->belongsTo(Ingredient::class);
+        return $this->belongsTo(Ingredient::class, 'ingredients_id');
+    }
+    public function carts()
+    {
+        return $this->belongsToMany(Cart::class, 'cart_ingredients', 'menus_has_ingredient_id', 'cart_id');
     }
 }

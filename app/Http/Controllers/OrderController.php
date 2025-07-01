@@ -16,7 +16,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['orderStatus', 'user'])->get();
+        $transactions = Transaction::with(['orderStatus', 'user'])->paginate(10);
         $customers = User::all();
         $menus = Menu::all();
         $orderTypes = ['dinein', 'takeaway'];
@@ -347,4 +347,81 @@ class OrderController extends Controller
         return view('myOrder.index', compact('transactions'));
     }
 >>>>>>> Stashed changes
+
+    public function checkoutForm()
+    {
+        $userId = auth()->id(); // ambil user login
+        $cart = Cart::with('menu')->where('users_id', $userId)->get();
+
+        $users = User::all();
+        $orderTypes = ['dinein', 'takeaway'];
+        $paymentTypes = ['qris', 'credit', 'debit', 'e-wallet'];
+
+        $total = $cart->sum(function ($item) {
+            return $item->menus_price * $item->quantity;
+        });
+
+        return view('cart.checkout', compact('cartItems', 'users', 'orderTypes', 'paymentTypes', 'total'));
+    }
+
+
+    public function processCheckout(Request $request)
+    {
+        dd($request->all());
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->back()->with('error', 'Cart is empty!');
+        }
+
+        $request->validate([
+            'users_id' => 'required|exists:users,id',
+            'order_type' => 'required|in:dinein,takeaway',
+            'payment_type' => 'required|in:qris,credit,debit,e-wallet',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $invoice_number = $this->getLatestInvoiceNumber();
+            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+            $discount = 0; // Bisa tambahkan logic diskon nanti
+
+            $transaction = Transaction::create([
+                'invoice_number' => $invoice_number,
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'total' => $subtotal - $discount,
+                'order_type' => $request->order_type,
+                'payment_type' => $request->payment_type,
+                'users_id' => $request->users_id,
+            ]);
+
+            foreach ($cart as $menuId => $item) {
+                DetailTransaction::create([
+                    'transactions_invoice_number' => $transaction->invoice_number,
+                    'menus_id' => $menuId,
+                    'portion' => 'Regular',
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['price'] * $item['quantity'],
+                    'total' => $item['price'] * $item['quantity'],
+                    'notes' => null,
+                ]);
+            }
+
+            OrderStatus::create([
+                'transactions_invoice_number' => $transaction->invoice_number,
+                'status_type' => 'pending',
+            ]);
+
+            session()->forget('cart');
+
+            DB::commit();
+            return redirect()->route('admin.order.index')->with('success', 'Checkout berhasil!');
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Checkout gagal: ' . $e->getMessage());
+        }
+    }
+
+
 }

@@ -16,7 +16,7 @@ class FoodController extends Controller
 {
     public function index()
     {
-        $menus = Menu::with('images', 'category')->get();
+        $menus = Menu::with('images', 'category')->paginate(10);
         return view('admin.food.index', compact('menus'));
     }
 
@@ -56,13 +56,16 @@ class FoodController extends Controller
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('menus', 'public');
+                    $fileName = uniqid() . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('menus'), $fileName);
+
                     MenuImage::create([
                         'menus_id' => $menu->id,
-                        'image_path' => $imagePath,
+                        'image_path' => 'menus/' . $fileName, // ini path yang akan kamu panggil pakai asset()
                     ]);
                 }
             }
+
 
             if ($request->has('ingredients')) {
                 foreach ($request->ingredients as $ingredientId) {
@@ -157,14 +160,16 @@ class FoodController extends Controller
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('menus', 'public');
+                    $fileName = uniqid() . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('menus'), $fileName);
 
                     MenuImage::create([
                         'menus_id' => $food->id,
-                        'image_path' => $imagePath,
+                        'image_path' => 'menus/' . $fileName,
                     ]);
                 }
             }
+
 
             $ingredientIds = $request->input('ingredients', []);
             $food->ingredients()->sync($ingredientIds);
@@ -247,4 +252,8 @@ class FoodController extends Controller
             'ingredients' => $menu->ingredients,
         ]);
     }
+
+
+
+
 }

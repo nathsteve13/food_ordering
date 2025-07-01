@@ -7,9 +7,14 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\CartController;
+
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CheckoutController;
+use App\Models\Frontend;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,15 +27,12 @@ use App\Http\Controllers\Auth\RegisterController;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [FrontendController::class, 'index'])->name('home');
 
 Route::get('/products', function () {
     return view('products.index');
 });
 Route::get('/products/{id}', [FoodController::class, 'show'])->name('products.show');
-
 
 Route::get('/admin/dashboard', [ReportController::class, 'index'])->middleware(['auth'])->name('admin.dashboard');
 
@@ -44,7 +46,7 @@ Route::prefix('admin/food')->group(function () {
     Route::get('/', [FoodController::class, 'index'])->name('admin.food.index');
     Route::get('/create', [FoodController::class, 'create'])->name('admin.food.create');
     Route::post('/', [FoodController::class, 'store'])->name('admin.food.store');
-    
+
     // Routing untuk halaman detail produk
 
     Route::get('/detail/{id}', [FoodController::class, 'detail'])->name('admin.food.detail');
@@ -101,17 +103,28 @@ Route::get('/login', function () {
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory'])->name('menus.byCategory');
+// Detail Menu
+Route::get('/menus/{id}', [FrontendController::class, 'show'])->name('menus.show');
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+// cart
+Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
 
-//Menampilkan data report
+
+// Menampilkan data report
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
-<<<<<<< Updated upstream
-=======
 
 // Cart
-Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
-Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name('cart.checkout.process');
+// Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
+// Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name('cart.checkout.process');
+
+
+// Cart untuk Frontend
+Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
+Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
+Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -124,13 +137,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update-ingredients/{id}', [CartController::class, 'updateIngredients'])->name('cart.update.ingredients');
 });
 
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-Route::get('/my-orders', [OrderController::class, 'myOrders'])->middleware('auth')->name('my.orders');
 
 
 
 
-
->>>>>>> Stashed changes
