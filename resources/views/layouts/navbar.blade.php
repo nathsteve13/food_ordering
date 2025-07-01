@@ -11,6 +11,12 @@
             </div>
             <div class="col-sm-8 col-lg-9 d-flex justify-content-end align-items-center mt-3">
                 @if(Auth::check())
+                    <span class="text-black me-3">
+                        Welcome, {{ Auth::user()->name ?? Auth::user()->username ?? 'User' }}
+                    </span>
+                    <a class="btn btn-secondary rounded-pill px-4 py-2 me-2">
+                        My Orders
+                    </a>
                     <form action="{{ route('logout') }}" method="POST" class="d-inline me-2">
                         @csrf
                         <button type="submit" class="btn btn-danger rounded-pill px-4 py-2">Logout</button>

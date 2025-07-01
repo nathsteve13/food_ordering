@@ -31,7 +31,6 @@ Route::get('/products', function () {
 });
 Route::get('/products/{id}', [FoodController::class, 'show'])->name('products.show');
 
-
 Route::get('/admin/dashboard', [ReportController::class, 'index'])->middleware(['auth'])->name('admin.dashboard');
 
 // Tampilkan form konfirmasi pembayaran
@@ -100,10 +99,6 @@ Route::get('/login', function () {
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/member/home', [HomeController::class, 'index'])->name('member.home');
 
 Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory'])->name('menus.byCategory');
 // Detail Menu
