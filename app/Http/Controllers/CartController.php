@@ -33,31 +33,64 @@ class CartController extends Controller
         return view('cart.index', compact('cartItems', 'total'));
     }
 
-    public function add(Request $request, $menuId)
+    public function add(Request $request)
     {
-        $menu = Menu::findOrFail($menuId);
-        $userId = auth()->id();
-
-        $cart = Cart::firstOrNew([
-            'users_id' => $userId,
-            'menus_id' => $menuId,
+        $request->validate([
+            'menu_id' => 'required|integer',
+            'ingredients' => 'array',
+            'ingredients.*' => 'integer'
         ]);
+        try{
+            DB::beginTransaction();
+        $menu = Menu::findOrFail($request->menu_id);
+        $userId = auth()->id();
+        $ingredientIds = collect($request->input('ingredients', []))->filter()->map(fn($id) => (int)$id)->sort()->values();
 
-        $cart->menus_price = $menu->price;
-        $cart->quantity = $cart->exists ? $cart->quantity + 1 : 1;
-        $cart->save();
+        // Ambil semua cart item user dengan menu ini
+        $existingCarts = Cart::with('ingredients')
+            ->where('users_id', $userId)
+            ->where('menus_id', $request->menu_id)
+            ->get();
 
-        $ingredientIds = $request->input('ingredients', []);
-        foreach ($ingredientIds as $menuHasIngredientId) {
-            if (!empty($menuHasIngredientId)) {
+        $matchedCart = [];
+
+        foreach ($existingCarts as $cart) {
+            dd($cart);
+            $existingIngredientIds = CartIngredients::where('menu_has_ingredient_id', $cart->ingredients->menu_has_ingredient_id);
+            dd($existingIngredientIds);
+            if ($existingIngredientIds->toArray() === $ingredientIds->toArray()) {
+                $matchedCart = $cart;
+                break;
+            }
+        }
+        dd($matchedCart);
+
+        if ($matchedCart) {
+            // Menu + ingredients sama persis → tambahkan quantity
+            $matchedCart->quantity += 1;
+            $matchedCart->save();
+        } else {
+            // Kombinasi baru → buat cart item baru
+            $cart = Cart::create([
+                'users_id' => $userId,
+                'menus_id' => $menuId,
+                'menus_price' => $menu->price,
+                'quantity' => 1,
+            ]);
+
+            foreach ($ingredientIds as $menuHasIngredientId) {
                 CartIngredients::create([
                     'cart_id' => $cart->id,
                     'menu_has_ingredient_id' => $menuHasIngredientId,
                 ]);
             }
         }
-
+        DB::commit();
         return redirect()->route('cart.index')->with('success', 'Item added to cart!');
+        }catch(Exception $e){
+            DB::rollBack();
+            return redirect()->route('cart.index')->with('error', $e->getMessage());
+        }
     }
 
     public function updateQuantity(Request $request)
@@ -119,6 +152,7 @@ class CartController extends Controller
             'items.*.portion' => 'required|string|max:50',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric',
+            
             'total' => 'required|numeric',
         ]);
 

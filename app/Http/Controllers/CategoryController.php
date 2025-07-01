@@ -144,6 +144,7 @@ class CategoryController extends Controller
         $categories = Category::onlyTrashed()->get();
         return view('admin.category.trashed', compact('categories'));
     }
+    
     public function restore($id)
     {
         try {

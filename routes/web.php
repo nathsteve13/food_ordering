@@ -48,6 +48,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     });
 
     Route::prefix('/category')->group(function () {
+        Route::get('/trashed', [CategoryController::class, 'trashed'])->name('admin.category.trashed');
+        Route::put('/restore/{id}', [CategoryController::class, 'restore'])->name('admin.category.restore');
         Route::get('/', [CategoryController::class, 'index'])->name('admin.category.index');
         Route::get('/create', [CategoryController::class, 'create'])->name('admin.category.create');
         Route::post('/', [CategoryController::class, 'store'])->name('admin.category.store');
@@ -55,8 +57,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
         Route::put('/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
         Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
-        Route::put('/restore/{id}', [CategoryController::class, 'restore'])->name('admin.category.restore');
-        Route::get('/trashed', [CategoryController::class, 'trashed'])->name('admin.category.trashed');
     });
 });
 
@@ -77,13 +77,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route untuk Customer
 Route::get('/menus/category/{id}', [FrontendController::class, 'showByCategory'])->name('menus.byCategory');
 Route::get('/menus/{id}', [FrontendController::class, 'show'])->name('menus.show');
-Route::post('/cart/add', [FrontendController::class, 'add'])->name('cart.add');
-Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
-Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
-Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
-Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
-Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
