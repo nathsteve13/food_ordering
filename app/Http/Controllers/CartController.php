@@ -40,54 +40,60 @@ class CartController extends Controller
             'ingredients' => 'array',
             'ingredients.*' => 'integer'
         ]);
-        try{
+        try {
             DB::beginTransaction();
-        $menu = Menu::findOrFail($request->menu_id);
-        $userId = auth()->id();
-        $ingredientIds = collect($request->input('ingredients', []))->filter()->map(fn($id) => (int)$id)->sort()->values();
+            $menu = Menu::findOrFail($request->menu_id);
+            $userId = auth()->id();
 
-        // Ambil semua cart item user dengan menu ini
-        $existingCarts = Cart::with('ingredients')
-            ->where('users_id', $userId)
-            ->where('menus_id', $request->menu_id)
-            ->get();
+            $existingCarts = Cart::with('ingredients')
+                ->where('users_id', $userId)
+                ->where('menus_id', $request->menu_id)
+                ->get();
 
-        $matchedCart = [];
+            $matchedCart = [];
 
-        foreach ($existingCarts as $cart) {
-            dd($cart);
-            $existingIngredientIds = CartIngredients::where('menu_has_ingredient_id', $cart->ingredients->menu_has_ingredient_id);
-            dd($existingIngredientIds);
-            if ($existingIngredientIds->toArray() === $ingredientIds->toArray()) {
-                $matchedCart = $cart;
-                break;
+            foreach ($existingCarts as $cart) {
+                $existingIngredientIds = [];
+                foreach ($cart->ingredients as $ingredient) {
+                    $engId = CartIngredients::where('cart_id', $cart->id)
+                        ->where('menu_has_ingredient_id', $ingredient->ingredients_id)
+                        ->first();
+                    if ($engId) {
+                        $existingIngredientIds[] = $engId;
+                    }
+                }
+                $ingredientIds = $request->ingredients ?? [];
+                $existingIngredientId = $cart->ingredients->pluck('ingredients_id')->toArray();
+
+                $ingredientIds = array_map('intval', $request->ingredients ?? []);
+                if (empty(array_diff($ingredientIds, $existingIngredientId)) && empty(array_diff($existingIngredientId, $ingredientIds))) {
+                    $matchedCart = $cart;
+                    break;
+                }
             }
-        }
-        dd($matchedCart);
 
-        if ($matchedCart) {
-            // Menu + ingredients sama persis → tambahkan quantity
-            $matchedCart->quantity += 1;
-            $matchedCart->save();
-        } else {
-            // Kombinasi baru → buat cart item baru
-            $cart = Cart::create([
-                'users_id' => $userId,
-                'menus_id' => $menuId,
-                'menus_price' => $menu->price,
-                'quantity' => 1,
-            ]);
-
-            foreach ($ingredientIds as $menuHasIngredientId) {
-                CartIngredients::create([
-                    'cart_id' => $cart->id,
-                    'menu_has_ingredient_id' => $menuHasIngredientId,
+            if ($matchedCart) {
+                $matchedCart->increment('quantity');
+                $matchedCart->save();
+            } else {
+                $cart = Cart::create([
+                    'users_id' => $userId,
+                    'menus_id' => $request->menu_id,
+                    'menus_price' => $menu->price,
+                    'quantity' => 1,
                 ]);
+
+                foreach ($ingredientIds as $menuHasIngredientId) {
+                    CartIngredients::create([
+                        'cart_id' => $cart->id,
+                        'menu_has_ingredient_id' => $menuHasIngredientId,
+                    ]);
+                }
             }
-        }
-        DB::commit();
-        return redirect()->route('cart.index')->with('success', 'Item added to cart!');
-        }catch(Exception $e){
+            DB::commit();
+            return redirect()->route('cart.index')->with('success', 'Item added to cart!');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             return redirect()->route('cart.index')->with('error', $e->getMessage());
         }
@@ -152,7 +158,7 @@ class CartController extends Controller
             'items.*.portion' => 'required|string|max:50',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric',
-            
+
             'total' => 'required|numeric',
         ]);
 
@@ -192,7 +198,6 @@ class CartController extends Controller
                                 'detail_transaction_id' => $detailTransaction->id,
                                 'ingredients_id' => $menuIngredient['ingredients_id'],
                             ]);
-
                         }
                     }
                 }
@@ -207,7 +212,6 @@ class CartController extends Controller
             DB::rollBack();
             return redirect()->route('cart.index')->with('error', 'Checkout failed: ' . $e->getMessage());
         }
-
     }
     public function edit($id)
     {
