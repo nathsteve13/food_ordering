@@ -19,14 +19,16 @@
                                             <div class="content-wrapper col-md-7">
                                                 <div class="categories my-3">100% Delicious</div>
                                                 <h3 class="display-4">Salmon Grilled</h3>
-                                                <p>Grilled salmon is a healthy and delicious dish made by cooking fresh salmon over an open flame or grill. 
-                                                    It has a tender, juicy texture with a slightly smoky flavor, often seasoned with herbs, lemon, and garlic to enhance its natural taste.</p>
+                                                <p>Grilled salmon is a healthy and delicious dish made by cooking fresh
+                                                    salmon over an open flame or grill.
+                                                    It has a tender, juicy texture with a slightly smoky flavor, often
+                                                    seasoned with herbs, lemon, and garlic to enhance its natural taste.</p>
                                                 <a href="#"
                                                     class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop
                                                     Now</a>
                                             </div>
                                             <div class="img-wrapper col-md-5">
-                                                <img src="images/categories/makanan_berat.jpeg"class="img-fluid">
+                                                <img src="images/categories/makanan_berat.jpeg" class="img-fluid">
                                             </div>
                                         </div>
                                     </div>
@@ -136,7 +138,8 @@
                     <div class="category-carousel swiper">
                         <div class="swiper-wrapper">
                             @foreach ($categories as $category)
-                                <a href="{{ route('menus.byCategory', $category->id) }}" class="nav-link category-item swiper-slide">
+                                <a href="{{ route('menus.byCategory', $category->id) }}"
+                                    class="nav-link category-item swiper-slide">
                                     {{-- <img src="{{ asset('images/default-category.png') }}" alt="{{ $category->name }}"> --}}
                                     <h3 class="category-title">{{ $category->name }}</h3>
                                 </a>
@@ -194,25 +197,19 @@
                         <div class="tabs-header d-flex justify-content-between border-bottom my-5">
                             <h3>Our Menu</h3>
                         </div>
-                        <div class="tab-content" id="nav-tabContent">
-                            @foreach (['all', 'heavy', 'drinks', 'snacks', 'dessert'] as $tab)
-                                <div class="tab-pane fade {{ $tab == 'all' ? 'show active' : '' }}" id="nav-{{ $tab }}"
-                                    role="tabpanel" aria-labelledby="nav-{{ $tab }}-tab">
-                                    <div
-                                        class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                                        @foreach ($menus as $menu)
-                                            @include('partials.product-card', ['menu' => $menu])
-                                        @endforeach
 
-                                    </div>
-                                </div>
+                        <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                            @foreach ($menus as $menu)
+                                @include('partials.product-card', ['menu' => $menu])
                             @endforeach
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
 
     @include('layouts.slider')
 

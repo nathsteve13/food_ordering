@@ -4,7 +4,8 @@
     <div class="container">
         <h1>List Order</h1>
 
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createOrderModal" onclick="generateInvoiceNumber()">
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createOrderModal"
+            onclick="generateInvoiceNumber()">
             Create Order
         </button>
 
@@ -37,21 +38,27 @@
                         <td>{{ $order->user->name ?? '-' }}</td>
                         <td>{{ $order->created_at->format('d M Y H:i') }}</td>
                         <td>
-                            <select class="form-select form-select-sm d-inline-block w-auto me-1 status-dropdown" data-invoice="{{ $order->invoice_number }}">
-                                <option selected disabled>Pilih status</option>
+                            <select class="form-select form-select-sm d-inline-block w-auto me-1 status-dropdown"
+                                data-invoice="{{ $order->invoice_number }}">
+                                @php
+                                    $currentStatus = $order->orderStatus->status_type ?? 'pending';
+                                @endphp
                                 @foreach (['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}" {{ optional($order->orderStatus)->status_type === $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
                             </select>
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-success update-status-btn" data-invoice="{{ $order->invoice_number }}">Update</button>
+                            <button class="btn btn-sm btn-success update-status-btn"
+                                data-invoice="{{ $order->invoice_number }}">Update</button>
                             <button class="btn btn-info btn-sm" onclick="showDetailModal('{{ $order->invoice_number }}')">
                                 Detail
                             </button>
-                            <form action="{{ route('admin.order.destroy', $order->invoice_number) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                            <form action="{{ route('admin.order.destroy', $order->invoice_number) }}" method="POST"
+                                style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete this order?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -137,10 +144,12 @@
                             <tbody>
                                 <tr class="item-row">
                                     <td>
-                                        <select name="items[0][menus_id]" class="form-select menu-select" onchange="updateItemPrice(this)">
+                                        <select name="items[0][menus_id]" class="form-select menu-select"
+                                            onchange="updateItemPrice(this)">
                                             <option disabled selected>Pilih</option>
                                             @foreach ($menus as $m)
-                                                <option value="{{ $m->id }}" data-price="{{ $m->price }}">{{ $m->name }}</option>
+                                                <option value="{{ $m->id }}" data-price="{{ $m->price }}">{{ $m->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -166,86 +175,105 @@
 @endsection
 
 @push('scripts')
-<script>
-function generateInvoiceNumber() {
-    const date = new Date();
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    fetch('/api/invoice-latest-number')
-        .then(res => res.json())
-        .then(data => {
-            const sequence = String(data.next_number).padStart(4, '0');
-            document.querySelector('input[name="invoice_number"]').value = `INV-${yyyy}-${mm}-${dd}-${sequence}`;
+    <script>
+        function generateInvoiceNumber() {
+            const date = new Date();
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            fetch('/api/invoice-latest-number')
+                .then(res => res.json())
+                .then(data => {
+                    const sequence = String(data.next_number).padStart(4, '0');
+                    document.querySelector('input[name="invoice_number"]').value = `INV-${yyyy}-${mm}-${dd}-${sequence}`;
+                });
+        }
+
+        function parseDiscount(input) {
+            if (input.includes('%')) {
+                return parseFloat(input.replace('%', '')) / 100;
+            }
+            return parseFloat(input);
+        }
+
+        function recalculateItemTotal(row) {
+            const qty = parseFloat(row.querySelector('[name$="[quantity]"]').value) || 0;
+            const price = parseFloat(row.querySelector('[name$="[subtotal]"]').value) || 0;
+            const totalField = row.querySelector('[name$="[total]"]');
+            totalField.value = qty * price;
+            recalculateSubtotal();
+        }
+
+        function recalculateSubtotal() {
+            const totalInputs = document.querySelectorAll('input[name$="[total]"]');
+            let subtotal = 0;
+            totalInputs.forEach(input => subtotal += parseFloat(input.value || 0));
+            document.querySelector('input[name="subtotal"]').value = subtotal;
+            recalculateFinalTotal();
+        }
+
+        function recalculateFinalTotal() {
+            const subtotal = parseFloat(document.querySelector('input[name="subtotal"]').value || 0);
+            const discountRaw = document.querySelector('input[name="discount"]').value;
+            const discount = parseDiscount(discountRaw);
+            const total = subtotal - (subtotal * discount);
+            document.querySelector('input[name="total"]').value = total;
+        }
+
+        function updateItemPrice(select) {
+            const price = parseFloat(select.selectedOptions[0].dataset.price || 0);
+            const row = select.closest('tr');
+            row.querySelector('[name$="[subtotal]"]').value = price;
+            recalculateItemTotal(row);
+        }
+
+        let idx = 1;
+        document.getElementById('add-item').addEventListener('click', () => {
+            const tpl = document.querySelector('.item-row');
+            const tr = tpl.cloneNode(true);
+            tr.querySelectorAll('select, input').forEach(el => {
+                const name = el.getAttribute('name').replace('[0]', `[${idx}]`);
+                el.setAttribute('name', name);
+                if (!el.classList.contains('menu-select')) el.value = '';
+            });
+            document.querySelector('#items-table tbody').append(tr);
+            idx++;
         });
-}
 
-function parseDiscount(input) {
-    if (input.includes('%')) {
-        return parseFloat(input.replace('%', '')) / 100;
-    }
-    return parseFloat(input);
-}
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-item')) {
+                const rows = document.querySelectorAll('.item-row');
+                if (rows.length > 1) e.target.closest('tr').remove();
+                recalculateSubtotal();
+            }
+        });
 
-function recalculateItemTotal(row) {
-    const qty = parseFloat(row.querySelector('[name$="[quantity]"]').value) || 0;
-    const price = parseFloat(row.querySelector('[name$="[subtotal]"]').value) || 0;
-    const totalField = row.querySelector('[name$="[total]"]');
-    totalField.value = qty * price;
-    recalculateSubtotal();
-}
-
-function recalculateSubtotal() {
-    const totalInputs = document.querySelectorAll('input[name$="[total]"]');
-    let subtotal = 0;
-    totalInputs.forEach(input => subtotal += parseFloat(input.value || 0));
-    document.querySelector('input[name="subtotal"]').value = subtotal;
-    recalculateFinalTotal();
-}
-
-function recalculateFinalTotal() {
-    const subtotal = parseFloat(document.querySelector('input[name="subtotal"]').value || 0);
-    const discountRaw = document.querySelector('input[name="discount"]').value;
-    const discount = parseDiscount(discountRaw);
-    const total = subtotal - (subtotal * discount);
-    document.querySelector('input[name="total"]').value = total;
-}
-
-function updateItemPrice(select) {
-    const price = parseFloat(select.selectedOptions[0].dataset.price || 0);
-    const row = select.closest('tr');
-    row.querySelector('[name$="[subtotal]"]').value = price;
-    recalculateItemTotal(row);
-}
-
-let idx = 1;
-document.getElementById('add-item').addEventListener('click', () => {
-    const tpl = document.querySelector('.item-row');
-    const tr = tpl.cloneNode(true);
-    tr.querySelectorAll('select, input').forEach(el => {
-        const name = el.getAttribute('name').replace('[0]', `[${idx}]`);
-        el.setAttribute('name', name);
-        if (!el.classList.contains('menu-select')) el.value = '';
-    });
-    document.querySelector('#items-table tbody').append(tr);
-    idx++;
-});
-
-document.addEventListener('click', e => {
-    if (e.target.classList.contains('remove-item')) {
-        const rows = document.querySelectorAll('.item-row');
-        if (rows.length > 1) e.target.closest('tr').remove();
-        recalculateSubtotal();
-    }
-});
-
-document.addEventListener('input', function(e) {
-    if (e.target.matches('[name$="[quantity]"]') || e.target.matches('[name$="[subtotal]"]')) {
-        recalculateItemTotal(e.target.closest('tr'));
-    }
-    if (e.target.name === 'discount') {
-        recalculateFinalTotal();
-    }
-});
-</script>
+        document.addEventListener('input', function (e) {
+            if (e.target.matches('[name$="[quantity]"]') || e.target.matches('[name$="[subtotal]"]')) {
+                recalculateItemTotal(e.target.closest('tr'));
+            }
+            if (e.target.name === 'discount') {
+                recalculateFinalTotal();
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.update-status-btn').on('click', function () {
+                var invoiceNumber = $(this).data('invoice');
+                var selectedStatus = $('.status-dropdown[data-invoice="' + invoiceNumber + '"]').val();
+                $.ajax({
+                    type: 'PATCH',
+                    url: '/admin/order/status/update/' + invoiceNumber,
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        status_type: selectedStatus
+                    },
+                    success: function (data) {
+                        alert(data.message);
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

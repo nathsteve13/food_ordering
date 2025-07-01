@@ -18,12 +18,12 @@
                     @endif
 
                     {{-- Gambar tambahan --}}
-                    <div class="mt-3 d-flex flex-wrap gap-2">
+                    {{-- <div class="mt-3 d-flex flex-wrap gap-2">
                         @foreach ($menu->images as $image)
                             <img src="{{ asset('storage/' . $image->image_path) }}" class="rounded" width="100" height="100"
                                 alt="Image">
                         @endforeach
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="col-md-6">
@@ -58,6 +58,7 @@
                             </ul>
                         @endif
                         <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
+                        <a href="{{ route('home') }}" class="btn btn-secondary mt-3">Back</a>
                     </form>
                 </div>
             </div>

@@ -20,11 +20,9 @@ class FrontendController extends Controller
      */
     public function index()
     {
-        $recentMenus = Menu::where('created_at', '>=', Carbon::now()->subWeek())->get();
+        $recentMenus = Menu::with('images')->where('created_at', '>=', Carbon::now()->subWeek())->get();
 
-        $menus = Menu::with(['images', 'category'])
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->get();
+        $menus = Menu::with(['images', 'category'])->get();
 
         $bestSellingMenus = Menu::with('images')
             ->join('detail_transactions', 'menus.id', '=', 'detail_transactions.menus_id')
