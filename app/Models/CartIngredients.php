@@ -21,6 +21,6 @@ class CartIngredients extends Model
     }
     public function menuIngredient()
     {
-        return $this->belongsTo(MenusHasIngredient::class, 'menu_has_ingredient_id');
+        return $this->belongsTo(MenuHasIngredient::class, 'menu_has_ingredient_id');
     }
 }

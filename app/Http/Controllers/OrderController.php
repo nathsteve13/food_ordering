@@ -15,7 +15,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['orderStatus', 'user'])->get();
+        $transactions = Transaction::with(['orderStatus', 'user'])->paginate(10);
         $customers = User::all();
         $menus = Menu::all();
         $orderTypes = ['dinein', 'takeaway'];
@@ -253,17 +253,20 @@ class OrderController extends Controller
 
     public function checkoutForm()
     {
-        $cart = session('cart', []);
+        $userId = auth()->id(); // ambil user login
+        $cart = Cart::with('menu')->where('users_id', $userId)->get();
+
         $users = User::all();
         $orderTypes = ['dinein', 'takeaway'];
         $paymentTypes = ['qris', 'credit', 'debit', 'e-wallet'];
 
-        $total = collect($cart)->sum(function ($item) {
-        return $item['price'] * $item['quantity'];
+        $total = $cart->sum(function ($item) {
+            return $item->menus_price * $item->quantity;
         });
 
-        return view('cart.checkout', compact('cart', 'users', 'orderTypes', 'paymentTypes','total'));
+        return view('cart.checkout', compact('cartItems', 'users', 'orderTypes', 'paymentTypes', 'total'));
     }
+
 
     public function processCheckout(Request $request)
     {

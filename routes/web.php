@@ -8,6 +8,8 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\CartController;
+
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -125,13 +127,18 @@ Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('c
 Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
-    Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
-    Route::get('/cart/remove/{id}', [FrontendController::class, 'removeFromCart'])->name('cart.remove');
-    Route::post('/cart/update-quantity', [FrontendController::class, 'updateQuantity'])->name('cart.updateQuantity');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+    Route::get('/cart/checkout', [CartController::class, 'checkoutForm'])->name('cart.checkout.form');
+    Route::post('/cart/checkout', [CartController::class, 'processCheckout'])->name('cart.checkout.process');
+    Route::get('/cart/edit/{id}', [CartController::class, 'edit'])->name('cart.edit');
+    Route::post('/cart/update-ingredients/{id}', [CartController::class, 'updateIngredients'])->name('cart.update.ingredients');
 });
 
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
 
 
 
