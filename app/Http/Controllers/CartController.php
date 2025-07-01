@@ -23,7 +23,10 @@ class CartController extends Controller
             ->where('users_id', $userId)
             ->get();
 
-        $total = $cartItems->sum(fn($item) => $item->menus_price * $item->quantity);
+        $total = 0;
+        foreach ($cartItems as $item) {
+            $total += $item->menus_price * $item->quantity ?? 0;
+        }
 
         return view('cart.index', compact('cartItems', 'total'));
     }
