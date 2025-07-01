@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\User;
+use App\Models\Cart;
 use App\Models\OrderStatus;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class OrderController extends Controller
         $today = now()->format('Ymd');
         $count = Transaction::whereDate('created_at', today())->count() + 1;
         $formatted = str_pad($count, 4, '0', STR_PAD_LEFT);
-        $result = "INV-".$today."-".$formatted;
+        $result = "INV-" . $today . "-" . $formatted;
         return $result;
     }
 
@@ -87,17 +88,17 @@ class OrderController extends Controller
             'items.*.total' => 'required|numeric',
             'items.*.notes' => 'nullable|string|max:255',
         ]);
-        
+
         $discountValue = 0;
         if (str_contains($v['discount'], '%')) {
             $percentage = floatval(str_replace('%', '', $v['discount']));
             $discountValue = $v['subtotal'] * ($percentage / 100);
         } else {
-            $discountValue = $v['subtotal'] * (floatval($v['discount']) /100);
+            $discountValue = $v['subtotal'] * (floatval($v['discount']) / 100);
         }
         DB::beginTransaction();
         $invoice_number = $this->getLatestInvoiceNumber();
-        
+
         try {
             $tx = Transaction::create([
                 'invoice_number' => $invoice_number,
@@ -108,7 +109,7 @@ class OrderController extends Controller
                 'payment_type' => $v['payment_type'],
                 'users_id' => $v['users_id'],
             ]);
-            
+
             foreach ($v['items'] as $it) {
                 DetailTransaction::create([
                     'transactions_invoice_number' => $tx->invoice_number,
@@ -120,7 +121,7 @@ class OrderController extends Controller
                     'notes' => $it['notes'] ?? null,
                 ]);
             }
-            
+
             OrderStatus::create([
                 'transactions_invoice_number' => $tx->invoice_number,
                 'status_type' => 'pending',
@@ -208,8 +209,10 @@ class OrderController extends Controller
         try {
             $currentStatus = $order->orderStatus->status_type ?? null;
 
-            if (($currentStatus === 'proccessed' && $validated['status_type'] === 'pending') ||
-                ($currentStatus === 'ready' && $validated['status_type'] === 'proccessed')) {
+            if (
+                ($currentStatus === 'proccessed' && $validated['status_type'] === 'pending') ||
+                ($currentStatus === 'ready' && $validated['status_type'] === 'proccessed')
+            ) {
                 throw new \Exception('Invalid status transition.');
             }
 
@@ -249,5 +252,99 @@ class OrderController extends Controller
                 ->route('admin.order.trashed')
                 ->with('error', 'Failed to restore order: ' . $e->getMessage());
         }
+<<<<<<< Updated upstream
     }
+=======
+    }
+
+    public function checkoutForm()
+    {
+        $userId = auth()->id(); // ambil user login
+        $cart = Cart::with('menu')->where('users_id', $userId)->get();
+
+        $users = User::all();
+        $orderTypes = ['dinein', 'takeaway'];
+        $paymentTypes = ['qris', 'credit', 'debit', 'e-wallet'];
+
+        $total = $cart->sum(function ($item) {
+            return $item->menus_price * $item->quantity;
+        });
+
+        return view('cart.checkout', compact('cartItems', 'users', 'orderTypes', 'paymentTypes', 'total'));
+    }
+
+
+    public function processCheckout(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->back()->with('error', 'Cart is empty!');
+        }
+
+        $request->validate([
+            'users_id' => 'required|exists:users,id',
+            'order_type' => 'required|in:dinein,takeaway',
+            'payment_type' => 'required|in:qris,credit,debit,e-wallet',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $invoice_number = $this->getLatestInvoiceNumber();
+            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+            $discount = 0; // Bisa tambahkan logic diskon nanti
+
+            $transaction = Transaction::create([
+                'invoice_number' => $invoice_number,
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'total' => $subtotal - $discount,
+                'order_type' => $request->order_type,
+                'payment_type' => $request->payment_type,
+                'users_id' => $request->users_id,
+            ]);
+
+            foreach ($cart as $menuId => $item) {
+                DetailTransaction::create([
+                    'transactions_invoice_number' => $transaction->invoice_number,
+                    'menus_id' => $menuId,
+                    'portion' => 'Regular',
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['price'] * $item['quantity'],
+                    'total' => $item['price'] * $item['quantity'],
+                    'notes' => null,
+                ]);
+            }
+
+            OrderStatus::create([
+                'transactions_invoice_number' => $transaction->invoice_number,
+                'status_type' => 'pending',
+            ]);
+
+            session()->forget('cart');
+
+            DB::commit();
+            return redirect()->route('admin.order.index')->with('success', 'Checkout berhasil!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Checkout gagal: ' . $e->getMessage());
+        }
+    }
+    public function myOrders()
+    {
+        $user = auth()->user();
+
+        $transactions = Transaction::with([
+            'details.menu.ingredients',                
+            'details.excludedIngredients.ingredient',
+            'details.menu.images',
+            'orderStatus',
+            'statusHistory'
+        ])
+            ->where('users_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('myOrder.index', compact('transactions'));
+    }
+>>>>>>> Stashed changes
 }

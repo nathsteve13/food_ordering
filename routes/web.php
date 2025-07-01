@@ -106,3 +106,31 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 //Menampilkan data report
 Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
+<<<<<<< Updated upstream
+=======
+
+// Cart
+Route::get('/cart/checkout', [OrderController::class, 'checkoutForm'])->name('cart.checkout.form');
+Route::post('/cart/checkout', [OrderController::class, 'processCheckout'])->name('cart.checkout.process');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+    Route::get('/cart/checkout', [CartController::class, 'checkoutForm'])->name('cart.checkout.form');
+    Route::post('/cart/checkout', [CartController::class, 'processCheckout'])->name('cart.checkout.process');
+    Route::get('/cart/edit/{id}', [CartController::class, 'edit'])->name('cart.edit');
+    Route::post('/cart/update-ingredients/{id}', [CartController::class, 'updateIngredients'])->name('cart.update.ingredients');
+});
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+Route::get('/my-orders', [OrderController::class, 'myOrders'])->middleware('auth')->name('my.orders');
+
+
+
+
+
+>>>>>>> Stashed changes

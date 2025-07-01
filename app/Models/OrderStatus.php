@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class OrderStatus extends Model
 {
     protected $table = 'order_status';
+    public $timestamps = true;
     protected $fillable = [
         'transactions_invoice_number', 'status_type'
     ];

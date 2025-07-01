@@ -14,7 +14,13 @@ class Transaction extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'invoice_number', 'subtotal', 'discount', 'total', 'order_type', 'payment_type', 'users_id'
+        'invoice_number',
+        'subtotal',
+        'discount',
+        'total',
+        'order_type',
+        'payment_type',
+        'users_id'
     ];
 
     public function user()
@@ -37,7 +43,10 @@ class Transaction extends Model
     public function orderStatus()
     {
         return $this->hasOne(OrderStatus::class, 'transactions_invoice_number', 'invoice_number')
-                    ->latestOfMany();
+            ->latestOfMany();
     }
-
+    public function statusHistory()
+    {
+        return $this->hasMany(OrderStatus::class, 'transactions_invoice_number', 'invoice_number')->orderBy('created_at');
+    }
 }

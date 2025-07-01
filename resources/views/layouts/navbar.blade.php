@@ -9,6 +9,7 @@
                     </a>
                 </div>
             </div>
+<<<<<<< Updated upstream
 
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
                 <div class="search-bar row bg-light p-2 my-2 rounded-4">
@@ -76,6 +77,28 @@
                         <span class="fs-6 text-muted dropdown-toggle">Your Cart</span>
                     </button>
                 </div>
+=======
+            <div class="col-sm-8 col-lg-9 d-flex justify-content-end align-items-center mt-3">
+                @if(Auth::check())
+                    <span class="text-black me-3">
+                        Welcome, {{ Auth::user()->name ?? Auth::user()->username ?? 'User' }}
+                    </span>
+                    <a href="{{ route('my.orders') }}" class="btn btn-secondary rounded-pill px-4 py-2 me-2">
+                        My Orders
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline me-2">
+                        @csrf
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2">Logout</button>
+                    </form>
+                    <a href="{{ route('cart.index') }}" class="btn btn-success rounded-pill px-4 py-2">
+                        Cart
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-4 py-2 ms-auto">
+                        Login
+                    </a>
+                @endif
+>>>>>>> Stashed changes
             </div>
 
         </div>
