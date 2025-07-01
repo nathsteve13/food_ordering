@@ -12,7 +12,7 @@ class CategoryController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $categories = Category::paginate(10);
@@ -22,7 +22,7 @@ class CategoryController extends Controller
     public function create()
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         return view('admin.category.create');
@@ -64,7 +64,7 @@ class CategoryController extends Controller
     public function show($id)
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $category = Category::with('menus')->findOrFail($id);
@@ -74,7 +74,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $category = Category::with('menus')->findOrFail($id);

@@ -16,7 +16,7 @@ class ReportController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
 

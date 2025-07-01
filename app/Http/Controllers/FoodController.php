@@ -17,7 +17,7 @@ class FoodController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
 
@@ -28,7 +28,7 @@ class FoodController extends Controller
     public function create()
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $kategories = Category::all();
@@ -117,7 +117,7 @@ class FoodController extends Controller
     public function edit($id)
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $food = Menu::findOrFail($id);
@@ -249,7 +249,7 @@ class FoodController extends Controller
     public function detail($id)
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $menu = Menu::with(['ingredients'])->findOrFail($id);

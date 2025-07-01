@@ -17,7 +17,7 @@ class OrderController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $transactions = Transaction::with(['orderStatus', 'user'])->paginate(10);
@@ -48,7 +48,7 @@ class OrderController extends Controller
     public function detail($invoice_number)
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         try {
@@ -146,7 +146,7 @@ class OrderController extends Controller
     public function show($invoice_number)
     {
         $user = auth()->user();
-        if (!$user || !$user->is_admin) {
+        if (!$user || !$user->role || $user->role !== 'admin') {
             return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
         }
         $order = Transaction::with('user')->findOrFail($invoice_number);
