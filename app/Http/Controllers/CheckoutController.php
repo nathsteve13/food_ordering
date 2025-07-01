@@ -13,17 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
-    public function index()
-    {
-        $iduser = Auth::user()->id;
-        $cart = Cart::where('user_id', $iduser)->get();
-        $cartDetails = Cart::with(['menu.images', 'ingredients.ingredient'])
-            ->where('users_id', $iduser)
-            ->get();
-
-        return view('checkout.index', compact('cart', 'cartDetails'));
-    }
-
+    
     public function store(Request $request)
     {
         DB::beginTransaction();

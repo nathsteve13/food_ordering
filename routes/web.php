@@ -124,10 +124,6 @@ Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('ca
 Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
 
-// Route::get('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
-// // Route::post('/cart/add', [FrontendController::class, 'addToCartPost'])->name('cart.add.post');
-// Route::post('/cart/update-quantity', [FrontendController::class, 'updateCartQuantity'])->name('cart.updateQuantity');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [FrontendController::class, 'viewCart'])->name('cart.index');
     Route::post('/cart/add/{id}', [FrontendController::class, 'addToCart'])->name('cart.add');
@@ -135,7 +131,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update-quantity', [FrontendController::class, 'updateQuantity'])->name('cart.updateQuantity');
 });
 
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 
