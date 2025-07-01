@@ -161,7 +161,6 @@ class CartController extends Controller
                             ];
                         }
                     }
-                    dd($orderIngredient);
 
                 }
             }
