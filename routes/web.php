@@ -13,6 +13,7 @@ use App\Http\Controllers\CartController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CheckoutController;
 use App\Models\Frontend;
 
 /*
@@ -32,7 +33,6 @@ Route::get('/products', function () {
     return view('products.index');
 });
 Route::get('/products/{id}', [FoodController::class, 'show'])->name('products.show');
-
 
 Route::get('/admin/dashboard', [ReportController::class, 'index'])->middleware(['auth'])->name('admin.dashboard');
 
@@ -129,7 +129,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update-ingredients/{id}', [CartController::class, 'updateIngredients'])->name('cart.update.ingredients');
 });
 
-
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 
 

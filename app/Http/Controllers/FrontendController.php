@@ -35,6 +35,10 @@ class FrontendController extends Controller
 
         $categories = Category::all();
 
+        if (auth()->check()) {
+            return view('member.home', compact('recentMenus', 'menus', 'bestSellingMenus', 'categories'));
+        }
+
         return view('home', compact('recentMenus', 'menus', 'bestSellingMenus', 'categories'));
     }
     
@@ -90,5 +94,13 @@ class FrontendController extends Controller
     public function destroy(Frontend $frontend)
     {
         //
+    }
+
+    public function showByCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        $menus = Menu::where('categories_id', $id)->get(); // sesuaikan nama kolom foreign key-nya
+
+        return view('menus.byCategory', compact('category', 'menus'));
     }
 }

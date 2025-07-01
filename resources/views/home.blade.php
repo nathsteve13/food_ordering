@@ -1,118 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="py-3"
-        style="background-image: url('images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-
-                    <div class="banner-blocks">
-
-                        <div class="banner-ad large bg-info block-1">
-
-                            <div class="swiper main-swiper">
-                                <div class="swiper-wrapper">
-
-                                    <div class="swiper-slide">
-                                        <div class="row banner-content p-5">
-                                            <div class="content-wrapper col-md-7">
-                                                <div class="categories my-3">100% Delicious</div>
-                                                <h3 class="display-4">Salmon Grilled</h3>
-                                                <p>Grilled salmon is a healthy and delicious dish made by cooking fresh
-                                                    salmon over an open flame or grill.
-                                                    It has a tender, juicy texture with a slightly smoky flavor, often
-                                                    seasoned with herbs, lemon, and garlic to enhance its natural taste.</p>
-                                                <a href="#"
-                                                    class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop
-                                                    Now</a>
-                                            </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/categories/makanan_berat.jpeg" class="img-fluid">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="swiper-slide">
-                                        <div class="row banner-content p-5">
-                                            <div class="content-wrapper col-md-7">
-                                                <div class="categories mb-3 pb-3">100% natural</div>
-                                                <h3 class="banner-title">Fresh Smoothie & Summer Juice</h3>
-                                                <p>Fresh smoothies are nutritious blended drinks made from real fruits,
-                                                    vegetables, and natural ingredients for a refreshing boost.</p>
-                                                <a href="#"
-                                                    class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop
-                                                    Collection</a>
-                                            </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-1.png" class="img-fluid">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="swiper-slide">
-                                        <div class="row banner-content p-5">
-                                            <div class="content-wrapper col-md-7">
-                                                <div class="categories mb-3 pb-3">100% natural</div>
-                                                <h3 class="banner-title">Heinz Tomato Ketchup</h3>
-                                                <p>Heinz Tomato Ketchup is a classic, rich, and tangy sauce made from ripe
-                                                    tomatoes and a secret blend of spices.</p>
-                                                <a href="#"
-                                                    class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop
-                                                    Collection</a>
-                                            </div>
-                                            <div class="img-wrapper col-md-5">
-                                                <img src="images/product-thumb-2.png" class="img-fluid">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="swiper-pagination"></div>
-
-                            </div>
-                        </div>
-
-                        <div class="banner-ad bg-success-subtle block-2"
-                            style="background:url('images/ad-image-4.png') no-repeat;background-position: right bottom">
-                            <div class="row banner-content p-5">
-
-                                <div class="content-wrapper col-md-7">
-                                    <div class="categories sale mb-3 pb-3">20% off</div>
-                                    <h3 class="banner-title">Fruits & Vegetables</h3>
-                                    <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24"
-                                            height="24">
-                                            <use xlink:href="#arrow-right"></use>
-                                        </svg></a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="banner-ad bg-danger block-3"
-                            style="background:url('images/minuman.jpeg') no-repeat;background-position: right bottom">
-                            <div class="row banner-content p-5">
-
-                                <div class="content-wrapper col-md-7">
-                                    <div class="categories sale mb-3 pb-3">15% off</div>
-                                    <h3 class="item-title">Baked Products</h3>
-                                    <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24"
-                                            height="24">
-                                            <use xlink:href="#arrow-right"></use>
-                                        </svg></a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- / Banner Blocks -->
-
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="py-5 overflow-hidden">
         <div class="container-fluid">
             <div class="row">
@@ -122,7 +10,6 @@
                         <h2 class="section-title">Category</h2>
 
                         <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
                             <div class="swiper-buttons">
                                 <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
                                 <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
@@ -162,7 +49,6 @@
                         <h2 class="section-title">Newly Arrived Brands</h2>
 
                         <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
                             <div class="swiper-buttons">
                                 <button class="swiper-prev brand-carousel-prev btn btn-yellow">❮</button>
                                 <button class="swiper-next brand-carousel-next btn btn-yellow">❯</button>

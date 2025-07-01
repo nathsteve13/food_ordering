@@ -19,6 +19,5 @@
 
         <span class="qty text-muted small">{{ $menu->stock }} pcs</span>
         <span class="price fw-bold">Rp{{ number_format($menu->price, 0, ',', '.') }}</span>
-
     </div>
 </div>

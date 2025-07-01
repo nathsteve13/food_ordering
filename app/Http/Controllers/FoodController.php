@@ -16,7 +16,7 @@ class FoodController extends Controller
 {
     public function index()
     {
-        $menus = Menu::with('images', 'category')->get();
+        $menus = Menu::with('images', 'category')->paginate(10);
         return view('admin.food.index', compact('menus'));
     }
 
@@ -252,7 +252,6 @@ class FoodController extends Controller
             'ingredients' => $menu->ingredients,
         ]);
     }
-
 
 
 

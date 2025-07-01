@@ -15,7 +15,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['orderStatus', 'user'])->get();
+        $transactions = Transaction::with(['orderStatus', 'user'])->paginate(10);
         $customers = User::all();
         $menus = Menu::all();
         $orderTypes = ['dinein', 'takeaway'];
