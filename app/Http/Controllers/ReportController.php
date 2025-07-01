@@ -15,6 +15,11 @@ class ReportController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
+
         // 1. Active Member
         $activeMembers = DB::table('transactions')
             ->join('users', 'transactions.users_id', '=', 'users.id')

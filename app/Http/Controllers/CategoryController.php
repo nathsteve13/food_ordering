@@ -11,12 +11,20 @@ class CategoryController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         $categories = Category::paginate(10);
         return view('admin.category.index', compact('categories'));
     }
 
     public function create()
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         return view('admin.category.create');
     }
 
@@ -55,12 +63,20 @@ class CategoryController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         $category = Category::with('menus')->findOrFail($id);
         return view('admin.category.show', compact('category'));
     }
 
     public function edit($id)
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         $category = Category::with('menus')->findOrFail($id);
         return view('admin.category.edit', compact('category'));
     }

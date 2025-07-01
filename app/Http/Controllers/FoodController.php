@@ -16,12 +16,21 @@ class FoodController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
+
         $menus = Menu::with('images', 'category')->paginate(10);
         return view('admin.food.index', compact('menus'));
     }
 
     public function create()
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         $kategories = Category::all();
         $ingredients = Ingredient::all();
         return view('admin.food.create', compact('kategories', 'ingredients'));
@@ -105,19 +114,12 @@ class FoodController extends Controller
         }
     }
 
-    //Method untuk menampilkan product detail
-    public function show($id)
-    {
-        $food = Menu::with('images')->findOrFail($id);
-
-        if (!$food) {
-            return redirect()->route('admin.food.index')->with('error', 'Menu not found.');
-        }
-        return view('admin.food.show', compact('food'));
-    }
-
     public function edit($id)
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         $food = Menu::findOrFail($id);
         if (!$food) {
             return redirect()->route('food.index')->with('error', 'Menu not found.');
@@ -246,6 +248,10 @@ class FoodController extends Controller
     }
     public function detail($id)
     {
+        $user = auth()->user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        }
         $menu = Menu::with(['ingredients'])->findOrFail($id);
 
         return response()->json([
