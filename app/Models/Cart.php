@@ -31,5 +31,6 @@ class Cart extends Model
     public function ingredients()
     {
         return $this->belongsToMany(MenusHasIngredient::class, 'cart_ingredients', 'cart_id', 'menu_has_ingredient_id');
+        return $this->hasMany(CartIngredients::class, 'cart_id');
     }
 }

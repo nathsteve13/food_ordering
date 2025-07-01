@@ -17,7 +17,7 @@ class MenusHasIngredient extends Model
 
     public function ingredient()
     {
-        return $this->belongsTo(Ingredient::class);
+        return $this->belongsTo(Ingredient::class, 'ingredients_id');
     }
     public function carts()
     {

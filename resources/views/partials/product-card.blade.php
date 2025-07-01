@@ -20,20 +20,5 @@
         <span class="qty text-muted small">{{ $menu->stock }} pcs</span>
         <span class="price fw-bold">Rp{{ number_format($menu->price, 0, ',', '.') }}</span>
 
-        {{-- <div class="mt-auto d-flex align-items-center justify-content-between pt-2">
-            <div class="input-group product-qty" style="max-width: 110px;">
-                <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                        <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                </span>
-                <input type="text" name="quantity" class="form-control input-number text-center" value="1">
-                <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                        <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                </span>
-            </div>
-        </div>
     </div>
 </div>
