@@ -11,6 +11,7 @@ use App\Http\Controllers\FrontendController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CheckoutController;
 use App\Models\Frontend;
 
 /*
@@ -139,7 +140,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update-quantity', [FrontendController::class, 'updateQuantity'])->name('cart.updateQuantity');
 });
 
-
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 
 
