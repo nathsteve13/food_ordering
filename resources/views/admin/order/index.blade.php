@@ -44,7 +44,8 @@
                                     $currentStatus = $order->orderStatus->status_type ?? 'pending';
                                 @endphp
                                 @foreach (['pending', 'proccessed', 'ready'] as $status)
-                                    <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}"
+                                        {{ $currentStatus === $status ? 'selected' : '' }}>
                                         {{ ucfirst($status) }}
                                     </option>
                                 @endforeach
@@ -68,11 +69,26 @@
                 @endforeach
             </tbody>
             @if ($transactions->hasPages())
-            <div class="d-flex justify-content-center mt-4">
-                {{ $transactions->onEachSide(2)->links() }}
-            </div>
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $transactions->onEachSide(2)->links() }}
+                </div>
             @endif
         </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="showDetailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="detailModalBody">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Create Order -->
@@ -153,14 +169,16 @@
                                             onchange="updateItemPrice(this)">
                                             <option disabled selected>Pilih</option>
                                             @foreach ($menus as $m)
-                                                <option value="{{ $m->id }}" data-price="{{ $m->price }}">{{ $m->name }}
+                                                <option value="{{ $m->id }}" data-price="{{ $m->price }}">
+                                                    {{ $m->name }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td><input type="text" name="items[0][portion]" class="form-control"></td>
                                     <td><input type="number" name="items[0][quantity]" class="form-control"></td>
-                                    <td><input type="number" name="items[0][subtotal]" class="form-control" readonly></td>
+                                    <td><input type="number" name="items[0][subtotal]" class="form-control" readonly>
+                                    </td>
                                     <td><input type="number" name="items[0][total]" class="form-control" readonly></td>
                                     <td><input type="text" name="items[0][notes]" class="form-control"></td>
                                     <td><button type="button" class="btn btn-danger remove-item">–</button></td>
@@ -190,7 +208,8 @@
                 .then(res => res.json())
                 .then(data => {
                     const sequence = String(data.next_number).padStart(4, '0');
-                    document.querySelector('input[name="invoice_number"]').value = `INV-${yyyy}-${mm}-${dd}-${sequence}`;
+                    document.querySelector('input[name="invoice_number"]').value =
+                        `INV-${yyyy}-${mm}-${dd}-${sequence}`;
                 });
         }
 
@@ -253,7 +272,7 @@
             }
         });
 
-        document.addEventListener('input', function (e) {
+        document.addEventListener('input', function(e) {
             if (e.target.matches('[name$="[quantity]"]') || e.target.matches('[name$="[subtotal]"]')) {
                 recalculateItemTotal(e.target.closest('tr'));
             }
@@ -263,8 +282,8 @@
         });
     </script>
     <script>
-        $(document).ready(function () {
-            $('.update-status-btn').on('click', function () {
+        $(document).ready(function() {
+            $('.update-status-btn').on('click', function() {
                 var invoiceNumber = $(this).data('invoice');
                 var selectedStatus = $('.status-dropdown[data-invoice="' + invoiceNumber + '"]').val();
                 $.ajax({
@@ -274,11 +293,91 @@
                         _token: '{{ csrf_token() }}',
                         status_type: selectedStatus
                     },
-                    success: function (data) {
+                    success: function(data) {
                         alert(data.message);
                     }
                 });
             });
         });
+
+        function showDetailModal(invoiceNumber) {
+            const modalBody = document.getElementById('detailModalBody');
+            const modal = new bootstrap.Modal(document.getElementById('showDetailModal'));
+            modalBody.innerHTML = '<p>Loading...</p>'; // Menampilkan loading sebelum mengambil data
+
+            fetch(`/admin/order/detail/${invoiceNumber}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Mengecek apakah data yang diterima valid
+                    if (!data.details || !Array.isArray(data.details)) {
+                        throw new Error('Invalid data format');
+                    }
+
+                    // Membuat tampilan tabel detail transaksi
+                    let html = `<table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Menu</th>
+                                    <th>Portion</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                    data.details.forEach(item => {
+                        html += `<tr>
+                            <td>${item.menu.name}</td>
+                            <td>${item.portion}</td>
+                            <td>${item.quantity}</td>
+                            <td>Rp ${item.total}</td>
+                            <td>${item.notes ?? '-'}</td>
+                        </tr>`;
+                    });
+
+                    html += `</tbody></table>`;
+
+                    // Menambahkan status history jika ada
+                    html += `<h5>Order Status History</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Updated At</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                    if (data.transactions && data.transactions.length > 0) {
+                        data.transactions.forEach(transaction => {
+                            html += `<tr>
+                                <td>${transaction.status_type}</td>
+                                <td>${new Date(transaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                            </tr>`;
+                        });
+                    } else {
+                        html += `<tr>
+                            <td colspan="2">No status history available</td>
+                        </tr>`;
+                    }
+
+                    html += `</tbody></table>`;
+
+                    // Memasukkan HTML ke dalam modal body
+                    modalBody.innerHTML = html;
+                    modal.show(); // Menampilkan modal setelah data selesai dimuat
+                })
+                .catch(error => {
+                    console.error('Error fetching detail:', error);
+                    modalBody.innerHTML = '<p>Failed to load data. Please try again later.</p>';
+                    modal.show();
+                });
+        }
     </script>
 @endpush
